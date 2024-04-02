@@ -7,6 +7,7 @@ using SolarWatch;
 using SolarWatch.Controllers;
 using SolarWatch.CoordinateProvider;
 using SolarWatch.JsonProcessor;
+using SolarWatch.Model;
 using SolarWatch.SunriseSunsetProvider;
 
 namespace SolarWatchTest;
@@ -47,17 +48,41 @@ public class SunriseSunsetControllerTest
     }
     
     
-    /*[Test]
+    [Test]
     public void GetSunriseSunsetReturnsBadRequestResultIfCityToCoordinateMethodFails()
     {
         //Arrange
-        _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(It.IsAny<string>()))
+        var city = "Budapest";
+        _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
+            .Returns(city);
+        _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
             .Throws(new JsonException());
         
         //Act
-        var result = _controller.GetSunriseSunset("BP", null);
+        var result = _controller.GetSunriseSunset(city, null);
         
         //Assert
-        Assert.IsInstanceOf(typeof(BadRequestResult), result.Result);
-    }*/
+        Assert.IsInstanceOf(typeof(BadRequestObjectResult), result.Result);
+    }
+    
+    [Test]
+    public void GetSunriseSunsetReturnsBadRequestResultIfSunsetProviderFails()
+    {
+        //Arrange
+        var city = "Budapest";
+        Coordinate coordinate = new Coordinate();
+        _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
+            .Returns(city);
+        _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
+            .Returns(coordinate);
+        _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(It.IsAny<Coordinate>(), It.IsAny<string>()))
+            .Throws(new FormatException());
+        
+        //Act
+        var result = _controller.GetSunriseSunset(city, null);
+        
+        //Assert
+        Assert.IsInstanceOf(typeof(BadRequestObjectResult), result.Result);
+    }
+    
 }
