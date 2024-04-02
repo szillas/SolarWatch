@@ -34,12 +34,6 @@ public class SunriseSunsetController : ControllerBase
             _logger.LogInformation(openWeatherMapData);
             Coordinate coordinate = _jsonProcessor.ProcessWeatherApiCityToCoordinate(openWeatherMapData);
             _logger.LogInformation(coordinate.ToString());
-
-            /*if (!DateTime.TryParse(date, out var dateValue) || string.IsNullOrEmpty(date))
-            {
-                dateValue = DateTime.Today;
-                date = dateValue.ToString("yyyy-MM-dd");
-            }*/
             
             var sunriseSunsetData = _sunriseSunsetProvider.GetSunriseSunset(coordinate, date!);
             return Ok(_jsonProcessor.ProcessSunriseSunsetApi(city, date, sunriseSunsetData));

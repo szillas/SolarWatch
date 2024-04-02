@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SolarWatch;
@@ -28,4 +30,34 @@ public class SunriseSunsetControllerTest
         _controller = new SunriseSunsetController(_loggerMock.Object, _coordinateDataProviderMock.Object,
             _jsonProcessorMock.Object, _sunriseSunsetProviderMock.Object);
     }
+
+    
+    [Test]
+    public void GetSunriseSunsetReturnsNotFoundResultIfCoordinateDataProviderFails()
+    {
+        //Arrange
+        _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
+            .Throws(new Exception());
+        
+        //Act
+        var result = _controller.GetSunriseSunset("BP", null);
+        
+        //Assert
+        Assert.IsInstanceOf(typeof(NotFoundObjectResult), result.Result);
+    }
+    
+    
+    /*[Test]
+    public void GetSunriseSunsetReturnsBadRequestResultIfCityToCoordinateMethodFails()
+    {
+        //Arrange
+        _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(It.IsAny<string>()))
+            .Throws(new JsonException());
+        
+        //Act
+        var result = _controller.GetSunriseSunset("BP", null);
+        
+        //Assert
+        Assert.IsInstanceOf(typeof(BadRequestResult), result.Result);
+    }*/
 }
