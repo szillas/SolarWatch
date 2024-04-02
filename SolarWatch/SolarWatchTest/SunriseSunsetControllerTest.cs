@@ -75,7 +75,7 @@ public class SunriseSunsetControllerTest
             .Returns(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
             .Returns(coordinate);
-        _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(It.IsAny<Coordinate>(), It.IsAny<string>()))
+        _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(coordinate, It.IsAny<string>()))
             .Throws(new FormatException());
         
         //Act
@@ -83,6 +83,30 @@ public class SunriseSunsetControllerTest
         
         //Assert
         Assert.IsInstanceOf(typeof(BadRequestObjectResult), result.Result);
+    }
+    
+    [Test]
+    public void GetSunriseSunsetReturnsNotFoundResultIfProcessSunriseSunsetApiMethodFails()
+    {
+        //Arrange
+        string city = "Budapest";
+        Coordinate coordinate = new Coordinate();
+        string sunriseSunset = "sun";
+        _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
+            .Returns(city);
+        _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
+            .Returns(coordinate);
+        _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(coordinate, It.IsAny<string>()))
+            .Returns(sunriseSunset);
+        _jsonProcessorMock.Setup(x =>
+                x.ProcessSunriseSunsetApi(city, It.IsAny<string>(), sunriseSunset))
+            .Throws(new Exception());
+        
+        //Act
+        var result = _controller.GetSunriseSunset(city, null);
+        
+        //Assert
+        Assert.IsInstanceOf(typeof(NotFoundObjectResult), result.Result);
     }
     
 }
