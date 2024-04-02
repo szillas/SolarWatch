@@ -109,4 +109,31 @@ public class SunriseSunsetControllerTest
         Assert.IsInstanceOf(typeof(NotFoundObjectResult), result.Result);
     }
     
+    
+    [Test]
+    public void GetSunriseSunsetReturnsNOkResultIfDateAndCityDataIsValid()
+    {
+        //Arrange
+        string city = "Budapest";
+        Coordinate coordinate = new Coordinate();
+        string sunriseSunset = "sun";
+        var expectedResult = new SunriseSunset(city, DateTime.Now, sunriseSunset, sunriseSunset );
+        _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
+            .Returns(city);
+        _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
+            .Returns(coordinate);
+        _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(coordinate, It.IsAny<string>()))
+            .Returns(sunriseSunset);
+        _jsonProcessorMock.Setup(x =>
+                x.ProcessSunriseSunsetApi(city, It.IsAny<string>(), sunriseSunset))
+            .Returns(expectedResult);
+        
+        //Act
+        var result = _controller.GetSunriseSunset(city, null);
+        
+        //Assert
+        Assert.IsInstanceOf(typeof(OkObjectResult), result.Result);
+        Assert.That(((OkObjectResult)result.Result).Value, Is.EqualTo(expectedResult));
+    }
+    
 }
