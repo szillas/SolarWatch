@@ -6,5 +6,5 @@ public interface IJsonProcessor
 {
     Coordinate ProcessWeatherApiCityToCoordinate(string data);
 
-    SunriseSunset ProcessSunriseSunsetApi(string city, DateTime date, string data);
+    SunriseSunset ProcessSunriseSunsetApi(string city, string? date, string data);
 }

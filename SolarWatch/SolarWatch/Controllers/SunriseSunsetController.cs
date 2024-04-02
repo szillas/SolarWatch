@@ -32,27 +32,32 @@ public class SunriseSunsetController : ControllerBase
         {
             var openWeatherMapData = _coordinateDataProvider.GetCoordinate(city);
             _logger.LogInformation(openWeatherMapData);
-            Coordinate coordinate2 = _jsonProcessor.ProcessWeatherApiCityToCoordinate(openWeatherMapData);
-            _logger.LogInformation(coordinate2.ToString());
+            Coordinate coordinate = _jsonProcessor.ProcessWeatherApiCityToCoordinate(openWeatherMapData);
+            _logger.LogInformation(coordinate.ToString());
 
-            if (!DateTime.TryParse(date, out var dateValue) || string.IsNullOrEmpty(date))
+            /*if (!DateTime.TryParse(date, out var dateValue) || string.IsNullOrEmpty(date))
             {
                 dateValue = DateTime.Today;
                 date = dateValue.ToString("yyyy-MM-dd");
-            }
+            }*/
             
-            var sunriseSunsetData = _sunriseSunsetProvider.GetSunriseSunset(coordinate2.Latitude, coordinate2.Longitude, date);
-            return Ok(_jsonProcessor.ProcessSunriseSunsetApi(city, dateValue, sunriseSunsetData));
+            var sunriseSunsetData = _sunriseSunsetProvider.GetSunriseSunset(coordinate, date!);
+            return Ok(_jsonProcessor.ProcessSunriseSunsetApi(city, date, sunriseSunsetData));
             
         }
         catch (JsonException e)
         {
-            _logger.LogError(e, "Error processing API call");
+            _logger.LogError(e, "Error processing API call.");
+            return BadRequest(e.Message);
+        }
+        catch (FormatException e)
+        {
+            _logger.LogError(e, "Date format is not correct.");
             return BadRequest(e.Message);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error getting sunrise/sunset");
+            _logger.LogError(e, "Error getting sunrise/sunset.");
             return NotFound("Error getting sunrise/sunset");
         }
     }

@@ -1,6 +1,8 @@
-﻿namespace SolarWatch.SunriseSunsetProvider;
+﻿using SolarWatch.Model;
+
+namespace SolarWatch.SunriseSunsetProvider;
 
 public interface ISunriseSunsetProvider
 {
-    string GetSunriseSunset(double lat, double lon, string date);
+    public string GetSunriseSunset(Coordinate cityCoord, string date);
 }

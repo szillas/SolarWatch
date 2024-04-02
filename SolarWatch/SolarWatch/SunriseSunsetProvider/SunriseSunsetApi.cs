@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using SolarWatch.Model;
 
 namespace SolarWatch.SunriseSunsetProvider;
 
@@ -10,11 +11,23 @@ public class SunriseSunsetApi : ISunriseSunsetProvider
     {
         _logger = logger;
     }
-
-    public string GetSunriseSunset(double lat, double lon, string date)
+    
+    public string GetSunriseSunset(Coordinate cityCoord, string? date)
     {
-
-        var url = $"https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&date={date}";
+        var url = $"https://api.sunrise-sunset.org/json?lat={cityCoord.Latitude}&lng={cityCoord.Longitude}";
+        if (!string.IsNullOrEmpty(date))
+        {
+            if (DateTime.TryParse(date, out var dateValue))
+            {
+                _logger.LogInformation(date);
+                string formattedDate = dateValue.ToString("yyyy-MM-dd");
+                url += $"&date={formattedDate}";
+            }
+            else
+            {
+                throw new FormatException("Date format is not correct.");
+            }
+        }
         
         using var client = new WebClient();
 
