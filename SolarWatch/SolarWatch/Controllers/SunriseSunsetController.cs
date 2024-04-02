@@ -26,16 +26,15 @@ public class SunriseSunsetController : ControllerBase
     }
     
     [HttpGet("GetSunriseSunset")]
-    public ActionResult<SunriseSunset> GetSunriseSunset(string city, string? date)
+    public async Task<ActionResult<SunriseSunset>> GetSunriseSunset(string city, string? date)
     {
         try
         {
-            var openWeatherMapData = _coordinateDataProvider.GetCoordinate(city);
-            _logger.LogInformation(openWeatherMapData);
+            var openWeatherMapData = await _coordinateDataProvider.GetCoordinate(city);
             Coordinate coordinate = _jsonProcessor.ProcessWeatherApiCityToCoordinate(openWeatherMapData);
             _logger.LogInformation(coordinate.ToString());
             
-            var sunriseSunsetData = _sunriseSunsetProvider.GetSunriseSunset(coordinate, date!);
+            var sunriseSunsetData = await _sunriseSunsetProvider.GetSunriseSunset(coordinate, date!);
             return Ok(_jsonProcessor.ProcessSunriseSunsetApi(city, date, sunriseSunsetData));
             
         }

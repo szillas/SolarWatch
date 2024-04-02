@@ -12,7 +12,7 @@ public class SunriseSunsetApi : ISunriseSunsetProvider
         _logger = logger;
     }
     
-    public string GetSunriseSunset(Coordinate cityCoord, string? date)
+    public async Task<string> GetSunriseSunset(Coordinate cityCoord, string? date)
     {
         var url = $"https://api.sunrise-sunset.org/json?lat={cityCoord.Latitude}&lng={cityCoord.Longitude}";
         if (!string.IsNullOrEmpty(date))
@@ -29,10 +29,11 @@ public class SunriseSunsetApi : ISunriseSunsetProvider
             }
         }
         
-        using var client = new WebClient();
+        using var client = new HttpClient();
 
         _logger.LogInformation("Calling Sunrise/Sunset API with url: {url}", url);
-        
-        return client.DownloadString(url);
+
+        var response = await client.GetAsync(url);
+        return await response.Content.ReadAsStringAsync();
     }
 }

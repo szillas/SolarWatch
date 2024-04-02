@@ -11,15 +11,16 @@ public class OpenWeatherCoordDataProviderApi : ICoordinateDataProvider
         _logger = logger;
     }
 
-    public string GetCoordinate(string city)
+    public async Task<string> GetCoordinate(string city)
     {
         var apiKey = "2d9cacce783892837a09a4d3970b5896";
         var url = $"https://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={apiKey}";
-        
-        using var client = new WebClient();
+
+        using var client = new HttpClient();
 
         _logger.LogInformation("Calling OpenWeather API for Coordinates with url: {url}", url);
-        
-        return client.DownloadString(url);
+
+        var response = await client.GetAsync(url);
+        return await response.Content.ReadAsStringAsync();
     }
 }

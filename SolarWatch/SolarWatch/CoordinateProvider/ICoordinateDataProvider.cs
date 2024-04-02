@@ -2,5 +2,5 @@
 
 public interface ICoordinateDataProvider
 {
-    string GetCoordinate(string city);
+    Task<string> GetCoordinate(string city);
 }

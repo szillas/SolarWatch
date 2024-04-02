@@ -4,5 +4,5 @@ namespace SolarWatch.SunriseSunsetProvider;
 
 public interface ISunriseSunsetProvider
 {
-    public string GetSunriseSunset(Coordinate cityCoord, string date);
+    public Task<string> GetSunriseSunset(Coordinate cityCoord, string date);
 }
