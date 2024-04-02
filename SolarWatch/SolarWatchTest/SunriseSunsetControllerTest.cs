@@ -34,14 +34,14 @@ public class SunriseSunsetControllerTest
 
     
     [Test]
-    public void GetSunriseSunsetReturnsNotFoundResultIfCoordinateDataProviderFails()
+    public async Task GetSunriseSunsetReturnsNotFoundResultIfCoordinateDataProviderFails()
     {
         //Arrange
         _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
             .Throws(new Exception());
         
         //Act
-        var result = _controller.GetSunriseSunset("BP", null);
+        var result = await _controller.GetSunriseSunset("BP", null);
         
         //Assert
         Assert.IsInstanceOf(typeof(NotFoundObjectResult), result.Result);
@@ -49,61 +49,61 @@ public class SunriseSunsetControllerTest
     
     
     [Test]
-    public void GetSunriseSunsetReturnsBadRequestResultIfCityToCoordinateMethodFails()
+    public async Task GetSunriseSunsetReturnsBadRequestResultIfCityToCoordinateMethodFails()
     {
         //Arrange
         var city = "Budapest";
         _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
-            .Returns(city);
+            .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
             .Throws(new JsonException());
         
         //Act
-        var result = _controller.GetSunriseSunset(city, null);
+        var result = await _controller.GetSunriseSunset(city, null);
         
         //Assert
         Assert.IsInstanceOf(typeof(BadRequestObjectResult), result.Result);
     }
     
     [Test]
-    public void GetSunriseSunsetReturnsBadRequestResultIfSunsetProviderFails()
+    public async Task GetSunriseSunsetReturnsBadRequestResultIfSunsetProviderFails()
     {
         //Arrange
         var city = "Budapest";
         Coordinate coordinate = new Coordinate();
         _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
-            .Returns(city);
+            .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
             .Returns(coordinate);
         _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(coordinate, It.IsAny<string>()))
             .Throws(new FormatException());
         
         //Act
-        var result = _controller.GetSunriseSunset(city, null);
+        var result = await _controller.GetSunriseSunset(city, null);
         
         //Assert
         Assert.IsInstanceOf(typeof(BadRequestObjectResult), result.Result);
     }
     
     [Test]
-    public void GetSunriseSunsetReturnsNotFoundResultIfProcessSunriseSunsetApiMethodFails()
+    public async Task GetSunriseSunsetReturnsNotFoundResultIfProcessSunriseSunsetApiMethodFails()
     {
         //Arrange
         string city = "Budapest";
         Coordinate coordinate = new Coordinate();
         string sunriseSunset = "sun";
         _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
-            .Returns(city);
+            .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
             .Returns(coordinate);
         _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(coordinate, It.IsAny<string>()))
-            .Returns(sunriseSunset);
+            .ReturnsAsync(sunriseSunset);
         _jsonProcessorMock.Setup(x =>
                 x.ProcessSunriseSunsetApi(city, It.IsAny<string>(), sunriseSunset))
             .Throws(new Exception());
         
         //Act
-        var result = _controller.GetSunriseSunset(city, null);
+        var result = await _controller.GetSunriseSunset(city, null);
         
         //Assert
         Assert.IsInstanceOf(typeof(NotFoundObjectResult), result.Result);
@@ -111,7 +111,7 @@ public class SunriseSunsetControllerTest
     
     
     [Test]
-    public void GetSunriseSunsetReturnsNOkResultIfDateAndCityDataIsValid()
+    public async Task GetSunriseSunsetReturnsNOkResultIfDateAndCityDataIsValid()
     {
         //Arrange
         string city = "Budapest";
@@ -119,17 +119,17 @@ public class SunriseSunsetControllerTest
         string sunriseSunset = "sun";
         var expectedResult = new SunriseSunset(city, DateTime.Now, sunriseSunset, sunriseSunset );
         _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
-            .Returns(city);
+            .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
             .Returns(coordinate);
         _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(coordinate, It.IsAny<string>()))
-            .Returns(sunriseSunset);
+            .ReturnsAsync(sunriseSunset);
         _jsonProcessorMock.Setup(x =>
                 x.ProcessSunriseSunsetApi(city, It.IsAny<string>(), sunriseSunset))
             .Returns(expectedResult);
         
         //Act
-        var result = _controller.GetSunriseSunset(city, null);
+        var result = await _controller.GetSunriseSunset(city, null);
         
         //Assert
         Assert.IsInstanceOf(typeof(OkObjectResult), result.Result);
