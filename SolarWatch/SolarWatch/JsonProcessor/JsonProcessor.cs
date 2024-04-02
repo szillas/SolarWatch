@@ -8,16 +8,27 @@ public class JsonProcessor : IJsonProcessor
     public Coordinate ProcessWeatherApiCityToCoordinate(string data)
     {
         JsonDocument json = JsonDocument.Parse(data);
-        JsonElement lon = json.RootElement[0].GetProperty("lon");
-        JsonElement lat = json.RootElement[0].GetProperty("lat");
 
-        Coordinate coordinate = new Coordinate
+        if (json.RootElement.ValueKind == JsonValueKind.Array && json.RootElement.GetArrayLength() > 0)
         {
-            Longitude = lon.GetDouble(),
-            Latitude = lat.GetDouble()
-        };
+            JsonElement city = json.RootElement[0];
 
-        return coordinate;
+            if (city.TryGetProperty("lon", out JsonElement lon))
+            {
+                if (city.TryGetProperty("lat", out JsonElement lat))
+                {
+                    Coordinate coordinate = new Coordinate
+                    {
+                        Longitude = lon.GetDouble(),
+                        Latitude = lat.GetDouble()
+                    };
+                    return coordinate;
+                }
+            }
+        }
+
+        throw new JsonException("Could not get coordinates. This city does not exist in the API.");
+        
     }
 
     public SunriseSunset ProcessSunriseSunsetApi(string city, DateTime date, string data)

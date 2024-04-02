@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using SolarWatch.CoordinateProvider;
 using SolarWatch.JsonProcessor;
 using SolarWatch.Model;
@@ -30,6 +31,7 @@ public class SunriseSunsetController : ControllerBase
         try
         {
             var openWeatherMapData = _coordinateDataProvider.GetCoordinate(city);
+            _logger.LogInformation(openWeatherMapData);
             Coordinate coordinate2 = _jsonProcessor.ProcessWeatherApiCityToCoordinate(openWeatherMapData);
             _logger.LogInformation(coordinate2.ToString());
 
@@ -42,6 +44,11 @@ public class SunriseSunsetController : ControllerBase
             var sunriseSunsetData = _sunriseSunsetProvider.GetSunriseSunset(coordinate2.Latitude, coordinate2.Longitude, date);
             return Ok(_jsonProcessor.ProcessSunriseSunsetApi(city, dateValue, sunriseSunsetData));
             
+        }
+        catch (JsonException e)
+        {
+            _logger.LogError(e, "Error processing API call");
+            return BadRequest(e.Message);
         }
         catch (Exception e)
         {
