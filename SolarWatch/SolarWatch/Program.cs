@@ -1,4 +1,5 @@
 using SolarWatch.CoordinateProvider;
+using SolarWatch.Data;
 using SolarWatch.JsonProcessor;
 using SolarWatch.SunriseSunsetProvider;
 
@@ -13,6 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ICoordinateDataProvider, OpenWeatherCoordDataProviderApi>();
 builder.Services.AddSingleton<ISunriseSunsetProvider, SunriseSunsetApi>();
 builder.Services.AddSingleton<IJsonProcessor, JsonProcessor>();
+builder.Services.AddDbContext<SolarWatchApiContext>();
 
 var app = builder.Build();
 
