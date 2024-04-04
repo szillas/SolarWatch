@@ -37,7 +37,7 @@ public class SunriseSunsetControllerTest
     public async Task GetSunriseSunsetReturnsNotFoundResultIfCoordinateDataProviderFails()
     {
         //Arrange
-        _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
+        _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .Throws(new Exception());
         
         //Act
@@ -53,7 +53,7 @@ public class SunriseSunsetControllerTest
     {
         //Arrange
         var city = "Budapest";
-        _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
+        _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
             .Throws(new JsonException());
@@ -71,7 +71,7 @@ public class SunriseSunsetControllerTest
         //Arrange
         var city = "Budapest";
         Coordinate coordinate = new Coordinate();
-        _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
+        _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
             .Returns(coordinate);
@@ -92,7 +92,7 @@ public class SunriseSunsetControllerTest
         string city = "Budapest";
         Coordinate coordinate = new Coordinate();
         string sunriseSunset = "sun";
-        _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
+        _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
             .Returns(coordinate);
@@ -118,7 +118,7 @@ public class SunriseSunsetControllerTest
         Coordinate coordinate = new Coordinate();
         string sunriseSunset = "sun";
         var expectedResult = new SunriseSunset(city, DateTime.Now, sunriseSunset, sunriseSunset );
-        _coordinateDataProviderMock.Setup(x => x.GetCoordinate(It.IsAny<string>()))
+        _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityToCoordinate(city))
             .Returns(coordinate);

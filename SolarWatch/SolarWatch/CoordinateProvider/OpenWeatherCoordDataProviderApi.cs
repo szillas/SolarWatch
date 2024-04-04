@@ -11,7 +11,7 @@ public class OpenWeatherCoordDataProviderApi : ICoordinateDataProvider
         _logger = logger;
     }
 
-    public async Task<string> GetCoordinate(string city)
+    public async Task<string> GetCityFromOpenWeatherMap(string city)
     {
         var apiKey = "2d9cacce783892837a09a4d3970b5896";
         var url = $"https://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={apiKey}";
