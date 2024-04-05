@@ -8,4 +8,5 @@ public class SunriseSunsetOfCity
     public string Sunrise { get; init; }
     public string Sunset { get; init; }
     public string? TimeZone { get; init; }
+    
 }

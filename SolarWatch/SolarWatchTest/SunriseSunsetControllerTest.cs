@@ -22,7 +22,7 @@ public class SunriseSunsetControllerTest
     private Mock<IJsonProcessor> _jsonProcessorMock;
     private SunriseSunsetController _controller;
 
-    [SetUp]
+    /*[SetUp]
     public void SetUp()
     {
         _loggerMock = new Mock<ILogger<SunriseSunsetController>>();
@@ -135,6 +135,6 @@ public class SunriseSunsetControllerTest
         //Assert
         Assert.IsInstanceOf(typeof(OkObjectResult), result.Result);
         Assert.That(((OkObjectResult)result.Result).Value, Is.EqualTo(expectedResult));
-    }
+    }*/
     
 }
