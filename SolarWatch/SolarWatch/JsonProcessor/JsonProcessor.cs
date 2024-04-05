@@ -84,7 +84,38 @@ public class JsonProcessor : IJsonProcessor
         }
         throw new JsonException("Could not get sunrise/sunset information from API.");
     }
+    
+    public SunriseSunsetOfCity ProcessSunriseSunsetApiStringToSunriseSunset(City city, string? date, string data)
+    {
+        JsonDocument json = JsonDocument.Parse(data);
 
+        DateTime dateTime = DateParser(date);
+        Console.WriteLine(dateTime);
+        
+        if (json.RootElement.ValueKind == JsonValueKind.Object)
+        {
+            JsonElement result = json.RootElement.GetProperty("results");
+
+            string sunriseTo24HoursFrom12 = ConvertAmPmTimeTo24Hours(GetStringProperty(result, "sunrise"));
+            string sunsetTo24HoursFrom12 = ConvertAmPmTimeTo24Hours(GetStringProperty(result, "sunset"));
+
+
+            string? timeZone = json.RootElement.TryGetProperty("tzid", out JsonElement timeZoneJson)
+                ? timeZoneJson.GetString()
+                : null;
+
+            return new SunriseSunsetOfCity
+            {
+                Date = dateTime,
+                City = city,
+                Sunrise = sunriseTo24HoursFrom12,
+                Sunset = sunsetTo24HoursFrom12,
+                TimeZone = timeZone
+            };
+        }
+        throw new JsonException("Could not get sunrise/sunset information from API.");
+    }
+    
     private string ConvertAmPmTimeTo24Hours(string time)
     {
         DateTime date = DateTime.Parse(time);

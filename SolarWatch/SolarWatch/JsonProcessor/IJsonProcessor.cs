@@ -9,4 +9,6 @@ public interface IJsonProcessor
     SunriseSunset ProcessSunriseSunsetApi(string city, string? date, string data);
 
     City ProcessWeatherApiCityStringToCity(string data);
+
+    SunriseSunsetOfCity ProcessSunriseSunsetApiStringToSunriseSunset(City city, string? date, string data);
 }
