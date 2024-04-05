@@ -34,7 +34,7 @@ public class SunriseSunsetController : ControllerBase
     }
     
     [HttpGet("GetSunriseSunset")]
-    public async Task<ActionResult<SunriseSunset>> GetSunriseSunset(string cityName, string? date)
+    public async Task<ActionResult<SunriseSunsetOfCity>> GetSunriseSunset(string cityName, string? date)
     {
         try
         {
