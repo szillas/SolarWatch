@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SolarWatch.CoordinateProvider;
 using SolarWatch.JsonProcessor;
 using SolarWatch.Model;
+using SolarWatch.Services.Extensions;
 using SolarWatch.Services.Repository;
 using SolarWatch.SunriseSunsetProvider;
 
@@ -50,12 +51,13 @@ public class SunriseSunsetController : ControllerBase
             };
             _logger.LogInformation(coordinate.ToString());
 
-            var sunriseSunset = _sunriseSunsetRepository.GetByDateAndCity(cityName, date);
+            DateTime dateTime = date.ParseDateOrDefaultToToday();
+            var sunriseSunset = _sunriseSunsetRepository.GetByDateAndCity(cityName, dateTime);
             if (sunriseSunset == null)
             {
                 var sunriseSunsetData = await _sunriseSunsetProvider.GetSunriseSunset(coordinate, date!);
                 sunriseSunset =
-                    _jsonProcessor.ProcessSunriseSunsetApiStringToSunriseSunset(city, date, sunriseSunsetData);
+                    _jsonProcessor.ProcessSunriseSunsetApiStringToSunriseSunset(city, dateTime, sunriseSunsetData);
                 _sunriseSunsetRepository.Add(sunriseSunset);
             }
             

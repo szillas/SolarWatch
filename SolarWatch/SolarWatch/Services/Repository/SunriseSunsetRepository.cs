@@ -18,10 +18,13 @@ public class SunriseSunsetRepository : ISunriseSunsetRepository
         return _dbContext.SunriseSunsetOfCities.ToList();
     }
 
-    public SunriseSunsetOfCity? GetByDateAndCity(int cityId, DateTime date)
+    public SunriseSunsetOfCity? GetByDateAndCity(string city, DateTime date)
     {
-        return _dbContext.SunriseSunsetOfCities
-            .FirstOrDefault(c => c.City.Id == cityId && c.Date == date);
+        var sunriseSunset = _dbContext.SunriseSunsetOfCities
+            .Include(s => s.City)
+            .FirstOrDefault(s => s.City.Name == city && s.Date == date);
+
+        return sunriseSunset;
     }
     
     public SunriseSunsetOfCity? GetByDateAndCity(string city, string? date)
