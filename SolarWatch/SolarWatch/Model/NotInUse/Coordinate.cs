@@ -1,4 +1,4 @@
-﻿namespace SolarWatch.Model;
+﻿namespace SolarWatch.Model.NotInUse;
 
 public class Coordinate
 {

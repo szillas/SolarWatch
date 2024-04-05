@@ -8,6 +8,7 @@ using SolarWatch.Controllers;
 using SolarWatch.CoordinateProvider;
 using SolarWatch.JsonProcessor;
 using SolarWatch.Model;
+using SolarWatch.Model.NotInUse;
 using SolarWatch.SunriseSunsetProvider;
 
 namespace SolarWatchTest;
