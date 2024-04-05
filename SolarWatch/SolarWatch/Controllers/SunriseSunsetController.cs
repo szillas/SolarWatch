@@ -45,17 +45,17 @@ public class SunriseSunsetController : ControllerBase
                 _cityRepository.Add(city);
             }
             
-            Coordinate coordinate = new Coordinate
+           /* Coordinate coordinate = new Coordinate
             {
                 Longitude = city.Longitude, Latitude = city.Latitude
             };
-            _logger.LogInformation(coordinate.ToString());
+            _logger.LogInformation(coordinate.ToString());*/
 
             DateTime dateTime = date.ParseDateOrDefaultToToday();
             var sunriseSunset = _sunriseSunsetRepository.GetByDateAndCity(cityName, dateTime);
             if (sunriseSunset == null)
             {
-                var sunriseSunsetData = await _sunriseSunsetProvider.GetSunriseSunset(coordinate, date!);
+                var sunriseSunsetData = await _sunriseSunsetProvider.GetSunriseSunset(city.Latitude, city.Longitude, date!);
                 sunriseSunset =
                     _jsonProcessor.ProcessSunriseSunsetApiStringToSunriseSunset(city, dateTime, sunriseSunsetData);
                 _sunriseSunsetRepository.Add(sunriseSunset);

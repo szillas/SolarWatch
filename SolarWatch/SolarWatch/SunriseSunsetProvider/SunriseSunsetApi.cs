@@ -12,9 +12,9 @@ public class SunriseSunsetApi : ISunriseSunsetProvider
         _logger = logger;
     }
     
-    public async Task<string> GetSunriseSunset(Coordinate cityCoord, string? date)
+    public async Task<string> GetSunriseSunset(double latitude, double longitude, string? date)
     {
-        var url = $"https://api.sunrise-sunset.org/json?lat={cityCoord.Latitude}&lng={cityCoord.Longitude}";
+        var url = $"https://api.sunrise-sunset.org/json?lat={latitude}&lng={longitude}";
         if (!string.IsNullOrEmpty(date))
         {
             if (DateTime.TryParse(date, out var dateValue))
