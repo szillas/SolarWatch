@@ -37,29 +37,9 @@ public class SunriseSunsetController : ControllerBase
     {
         try
         {
-            var city = _cityRepository.GetByName(cityName);
-            if (city == null)
-            {
-                var openWeatherMapData = await _coordinateDataProvider.GetCityFromOpenWeatherMap(cityName);
-                city = _jsonProcessor.ProcessWeatherApiCityStringToCity(openWeatherMapData);
-                _cityRepository.Add(city);
-            }
-            
-           /* Coordinate coordinate = new Coordinate
-            {
-                Longitude = city.Longitude, Latitude = city.Latitude
-            };
-            _logger.LogInformation(coordinate.ToString());*/
-
-            DateTime dateTime = date.ParseDateOrDefaultToToday();
-            var sunriseSunset = _sunriseSunsetRepository.GetByDateAndCity(cityName, dateTime);
-            if (sunriseSunset == null)
-            {
-                var sunriseSunsetData = await _sunriseSunsetProvider.GetSunriseSunset(city.Latitude, city.Longitude, date!);
-                sunriseSunset =
-                    _jsonProcessor.ProcessSunriseSunsetApiStringToSunriseSunset(city, dateTime, sunriseSunsetData);
-                _sunriseSunsetRepository.Add(sunriseSunset);
-            }
+            var city = await GetCityFromDbOrApi(cityName);
+            var dateTime = date.ParseDateOrDefaultToToday();
+            var sunriseSunset = await GetSunFromDbOrApi(city, dateTime, date);
             
             return Ok(sunriseSunset);
             
@@ -79,5 +59,29 @@ public class SunriseSunsetController : ControllerBase
             _logger.LogError(e, "Error getting sunrise/sunset.");
             return NotFound("Error getting sunrise/sunset");
         }
+    }
+
+    private async Task<City> GetCityFromDbOrApi(string cityName)
+    {
+        var city = _cityRepository.GetByName(cityName);
+        if (city == null)
+        {
+            var openWeatherMapData = await _coordinateDataProvider.GetCityFromOpenWeatherMap(cityName);
+            city = _jsonProcessor.ProcessWeatherApiCityStringToCity(openWeatherMapData);
+            _cityRepository.Add(city);
+        }
+        return city;
+    }
+
+    private async Task<SunriseSunsetOfCity> GetSunFromDbOrApi(City city, DateTime dateTime, string? date)
+    {
+        var sunriseSunset = _sunriseSunsetRepository.GetByDateAndCity(city.Name, dateTime);
+        if (sunriseSunset == null)
+        {
+            var sunriseSunsetData = await _sunriseSunsetProvider.GetSunriseSunset(city.Latitude, city.Longitude, date);
+            sunriseSunset = _jsonProcessor.ProcessSunriseSunsetApiStringToSunriseSunset(city, dateTime, sunriseSunsetData);
+            _sunriseSunsetRepository.Add(sunriseSunset);
+        }
+        return sunriseSunset;
     }
 }
