@@ -51,6 +51,8 @@ void AddServices()
     builder.Services.AddScoped<ICityRepository, CityRepository>();
     builder.Services.AddScoped<ISunriseSunsetRepository, SunriseSunsetRepository>();
     builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<ITokenService>(provider =>
+        new TokenService(issuerKey, builder.Configuration["Jwt:Issuer"], builder.Configuration["Jwt:Audience"]));
 }
 
 void ConfigureSwagger()
