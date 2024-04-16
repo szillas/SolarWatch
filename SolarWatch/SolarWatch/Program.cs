@@ -59,6 +59,8 @@ void AddDbContext()
 {
     builder.Services.AddDbContext<SolarWatchApiContext>(options => 
         options.UseSqlServer(sqlServerConnectionString));
+    builder.Services.AddDbContext<UsersContext>(options => 
+        options.UseSqlServer(sqlServerConnectionString));
 }
 
 void AddAuthentication()
