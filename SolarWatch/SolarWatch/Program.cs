@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using SolarWatch.CoordinateProvider;
 using SolarWatch.Data;
 using SolarWatch.Data.SeedData;
 using SolarWatch.JsonProcessor;
 using SolarWatch.Services.Authentication;
+using SolarWatch.Services.Providers.CoordinateProvider;
+using SolarWatch.Services.Providers.SunriseSunsetProvider;
 using SolarWatch.Services.Repository;
-using SolarWatch.SunriseSunsetProvider;
 
 var builder = WebApplication.CreateBuilder(args);
 

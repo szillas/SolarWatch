@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace SolarWatch.CoordinateProvider;
+﻿namespace SolarWatch.Services.Providers.CoordinateProvider;
 
 public class OpenWeatherCoordDataProviderApi : ICoordinateDataProvider
 {

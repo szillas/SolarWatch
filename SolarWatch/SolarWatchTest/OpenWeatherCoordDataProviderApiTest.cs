@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SolarWatch.CoordinateProvider;
+using SolarWatch.Services.Providers.CoordinateProvider;
 
 namespace SolarWatchTest;
 

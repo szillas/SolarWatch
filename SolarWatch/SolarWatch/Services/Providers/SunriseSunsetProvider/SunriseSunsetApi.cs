@@ -1,7 +1,4 @@
-﻿using System.Net;
-using SolarWatch.Model;
-
-namespace SolarWatch.SunriseSunsetProvider;
+﻿namespace SolarWatch.Services.Providers.SunriseSunsetProvider;
 
 public class SunriseSunsetApi : ISunriseSunsetProvider
 {

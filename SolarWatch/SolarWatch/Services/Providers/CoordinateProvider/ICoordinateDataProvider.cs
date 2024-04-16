@@ -1,4 +1,4 @@
-﻿namespace SolarWatch.CoordinateProvider;
+﻿namespace SolarWatch.Services.Providers.CoordinateProvider;
 
 public interface ICoordinateDataProvider
 {

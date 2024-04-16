@@ -5,12 +5,12 @@ using Moq;
 using NUnit.Framework;
 using SolarWatch;
 using SolarWatch.Controllers;
-using SolarWatch.CoordinateProvider;
 using SolarWatch.JsonProcessor;
 using SolarWatch.Model;
 using SolarWatch.Model.NotInUse;
+using SolarWatch.Services.Providers.CoordinateProvider;
+using SolarWatch.Services.Providers.SunriseSunsetProvider;
 using SolarWatch.Services.Repository;
-using SolarWatch.SunriseSunsetProvider;
 
 namespace SolarWatchTest;
 
