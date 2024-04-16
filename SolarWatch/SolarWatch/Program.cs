@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using SolarWatch.CoordinateProvider;
 using SolarWatch.Data;
+using SolarWatch.Data.SeedData;
 using SolarWatch.JsonProcessor;
 using SolarWatch.Services.Authentication;
 using SolarWatch.Services.Repository;
@@ -23,6 +25,11 @@ AddAuthentication();
 AddIdentity();
 
 var app = builder.Build();
+
+using var scope = app.Services.CreateScope();
+var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
+authenticationSeeder.AddRoles();
+authenticationSeeder.AddAdmin();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -53,11 +60,38 @@ void AddServices()
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<ITokenService>(provider =>
         new TokenService(issuerKey, builder.Configuration["Jwt:Issuer"], builder.Configuration["Jwt:Audience"]));
+    builder.Services.AddScoped<AuthenticationSeeder>();
 }
 
 void ConfigureSwagger()
 {
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(option =>
+    {
+        option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+        option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Please enter a valid token",
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = "Bearer"
+        });
+        option.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type=ReferenceType.SecurityScheme,
+                        Id="Bearer"
+                    }
+                },
+                new string[]{}
+            }
+        });
+    });
 }
 
 void AddDbContext()
@@ -102,5 +136,6 @@ void AddIdentity()
             options.Password.RequireUppercase = false;
             options.Password.RequireLowercase = false;
         })
+        .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<UsersContext>();
 }
