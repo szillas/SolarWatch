@@ -1,9 +1,7 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json;
-using Microsoft.AspNetCore.Authentication;
+﻿using System.Text.Json;
 using SolarWatch.Model;
 
-namespace SolarWatch.JsonProcessor;
+namespace SolarWatch.Services.JsonProcessor;
 
 public class JsonProcessor : IJsonProcessor
 {

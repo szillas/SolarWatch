@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SolarWatch.JsonProcessor;
 using SolarWatch.Model;
 using SolarWatch.Model.NotInUse;
 using SolarWatch.Services.Extensions;
+using SolarWatch.Services.JsonProcessor;
 using SolarWatch.Services.Providers.CoordinateProvider;
 using SolarWatch.Services.Providers.SunriseSunsetProvider;
 using SolarWatch.Services.Repository;

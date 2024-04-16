@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using NUnit.Framework;
-using SolarWatch.JsonProcessor;
 using SolarWatch.Model;
 using SolarWatch.Model.NotInUse;
+using SolarWatch.Services.JsonProcessor;
 
 namespace SolarWatchTest;
 

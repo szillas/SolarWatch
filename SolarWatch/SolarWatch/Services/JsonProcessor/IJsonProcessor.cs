@@ -1,7 +1,6 @@
 ﻿using SolarWatch.Model;
-using SolarWatch.Model.NotInUse;
 
-namespace SolarWatch.JsonProcessor;
+namespace SolarWatch.Services.JsonProcessor;
 
 public interface IJsonProcessor
 {
