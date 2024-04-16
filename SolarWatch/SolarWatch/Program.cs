@@ -1,10 +1,12 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SolarWatch.CoordinateProvider;
 using SolarWatch.Data;
 using SolarWatch.JsonProcessor;
+using SolarWatch.Services.Authentication;
 using SolarWatch.Services.Repository;
 using SolarWatch.SunriseSunsetProvider;
 
@@ -18,7 +20,7 @@ AddServices();
 ConfigureSwagger();
 AddDbContext();
 AddAuthentication();
-//AddIdentity();
+AddIdentity();
 
 var app = builder.Build();
 
@@ -48,6 +50,7 @@ void AddServices()
     builder.Services.AddSingleton<IJsonProcessor, JsonProcessor>();
     builder.Services.AddScoped<ICityRepository, CityRepository>();
     builder.Services.AddScoped<ISunriseSunsetRepository, SunriseSunsetRepository>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
 }
 
 void ConfigureSwagger()
@@ -82,4 +85,20 @@ void AddAuthentication()
                 ),
             };
         });
+}
+
+void AddIdentity()
+{
+    builder.Services
+        .AddIdentityCore<IdentityUser>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = false;
+            options.User.RequireUniqueEmail = true;
+            options.Password.RequireDigit = false;
+            options.Password.RequiredLength = 6;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireLowercase = false;
+        })
+        .AddEntityFrameworkStores<UsersContext>();
 }
