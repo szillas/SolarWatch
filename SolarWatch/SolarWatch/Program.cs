@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SolarWatch.CoordinateProvider;
 using SolarWatch.Data;
@@ -10,6 +11,7 @@ using SolarWatch.SunriseSunsetProvider;
 var builder = WebApplication.CreateBuilder(args);
 
 var issuerKey = builder.Configuration["SolarWatch:SecretKey"];
+var sqlServerConnectionString = builder.Configuration.GetConnectionString("SqlServerDefault");
 
 // Add services to the container.
 AddServices();
@@ -55,7 +57,8 @@ void ConfigureSwagger()
 
 void AddDbContext()
 {
-    builder.Services.AddDbContext<SolarWatchApiContext>();
+    builder.Services.AddDbContext<SolarWatchApiContext>(options => 
+        options.UseSqlServer(sqlServerConnectionString));
 }
 
 void AddAuthentication()
