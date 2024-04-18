@@ -65,4 +65,24 @@ public class CityController : ControllerBase
             return StatusCode(500, "An error occured while trying to add a city.");
         }
     }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCity(int id)
+    {
+        try
+        {
+            var cityInDb = await _cityRepository.GetById(id);
+            if (cityInDb == null)
+            {
+                return NotFound($"City with id {id} does not exist in the db.");
+            }
+            await _cityRepository.Delete(cityInDb);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An error occured while trying to delete a city.");
+            return StatusCode(500, "An error occured while trying to delete a city.");
+        }
+    }
 }

@@ -17,6 +17,10 @@ public class CityRepository : ICityRepository
     {
         return await _dbContext.Cities.ToListAsync();
     }
+    public async Task<City?> GetById(int id)
+    {
+        return await _dbContext.Cities.FirstOrDefaultAsync(c => c.Id == id);
+    }
 
     public async Task<City?> GetByName(string name)
     {
