@@ -1,4 +1,5 @@
-﻿using SolarWatch.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SolarWatch.Data;
 using SolarWatch.Model;
 
 namespace SolarWatch.Services.Repository;
@@ -12,16 +13,15 @@ public class CityRepository : ICityRepository
         _dbContext = context;
     }
 
-    public IEnumerable<City> GetAll()
+    public async Task<IEnumerable<City>> GetAll()
     {
-        return _dbContext.Cities.ToList();
+        return await _dbContext.Cities.ToListAsync();
     }
 
-    public City? GetByName(string name)
+    public async Task<City?> GetByName(string name)
     {
-        return _dbContext.Cities.FirstOrDefault(c => c.Name == name);
+        return await _dbContext.Cities.FirstOrDefaultAsync(c => c.Name == name);
     }
-    
     public City? GetByNameAndCountry(string name, string country)
     {
         return _dbContext.Cities.FirstOrDefault(c => c.Name == name && c.Country == country);

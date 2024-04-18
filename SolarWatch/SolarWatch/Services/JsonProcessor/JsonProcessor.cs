@@ -5,7 +5,7 @@ namespace SolarWatch.Services.JsonProcessor;
 
 public class JsonProcessor : IJsonProcessor
 {
-  public City ProcessWeatherApiCityStringToCity(string data)
+  public Task<City> ProcessWeatherApiCityStringToCity(string data)
     {
         JsonDocument json = JsonDocument.Parse(data);
 
@@ -20,7 +20,7 @@ public class JsonProcessor : IJsonProcessor
             
             string? state = cityString.TryGetProperty("state", out JsonElement stateElement) ? stateElement.GetString() : null;
 
-            return new City
+            var city = new City
             {
                 Name = name,
                 Country = country,
@@ -28,6 +28,8 @@ public class JsonProcessor : IJsonProcessor
                 Longitude = lon,
                 State = state
             };
+
+            return Task.FromResult(city);
         }
 
         throw new JsonException("Could not get coordinates. This city does not exist in the API.");

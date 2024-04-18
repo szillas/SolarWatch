@@ -65,11 +65,11 @@ public class SunriseSunsetController : ControllerBase
 
     private async Task<City> GetCityFromDbOrApi(string cityName)
     {
-        var city = _cityRepository.GetByName(cityName);
+        var city = await _cityRepository.GetByName(cityName);
         if (city == null)
         {
             var openWeatherMapData = await _coordinateDataProvider.GetCityFromOpenWeatherMap(cityName);
-            city = _jsonProcessor.ProcessWeatherApiCityStringToCity(openWeatherMapData);
+            city = await _jsonProcessor.ProcessWeatherApiCityStringToCity(openWeatherMapData);
             _cityRepository.Add(city);
         }
         return city;

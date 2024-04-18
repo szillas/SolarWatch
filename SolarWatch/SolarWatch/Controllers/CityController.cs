@@ -16,13 +16,12 @@ public class CityController : ControllerBase
         _cityRepository = cityRepository;
     }
     
-    //Does it need to be asynchronous?
     [HttpGet("Cities")]
     public async Task<IActionResult> GetAll()
     {
         try
         {
-            var cities = await Task.Run(() => _cityRepository.GetAll());
+            var cities = await _cityRepository.GetAll();
             return Ok(cities);
         }
         catch (Exception e)

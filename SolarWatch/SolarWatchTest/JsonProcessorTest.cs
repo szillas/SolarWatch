@@ -28,14 +28,14 @@ public class JsonProcessorTest
     }
 
     [Test]
-    public void ProcessWeatherApiCityToCoordinateReturnsCorrectCityFromString()
+    public async Task ProcessWeatherApiCityToCoordinateReturnsCorrectCityFromString()
     {
         // Arrange
         string data = "[{\"name\": \"Budapest\",\"lon\": -0.1276, \"lat\": 51.5074, \"country\": \"HU\"}]";
         string data2 = "[{\"name\": \"Budapest\",\"lon\": -0.1276, \"lat\": 51.5074, \"country\": \"HU\", \"state\": \"EU\"}]";
 
-        City city = _jsonProcessor.ProcessWeatherApiCityStringToCity(data);
-        City city2 = _jsonProcessor.ProcessWeatherApiCityStringToCity(data2);
+        City city = await _jsonProcessor.ProcessWeatherApiCityStringToCity(data);
+        City city2 = await _jsonProcessor.ProcessWeatherApiCityStringToCity(data2);
 
         // Assert
         Assert.IsNotNull(city);

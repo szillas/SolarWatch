@@ -54,7 +54,7 @@ public class SunriseSunsetControllerTest
     public async Task GetSunriseSunsetReturnsNotFoundResultIfCoordinateDataProviderFails()
     {
         //Arrange
-        _cityRepositoryMock.Setup(x => x.GetByName("Budapest")).Returns((City)null);
+        _cityRepositoryMock.Setup(x => x.GetByName("Budapest")).ReturnsAsync((City)null);
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .Throws(new Exception());
         
@@ -71,7 +71,7 @@ public class SunriseSunsetControllerTest
     {
         //Arrange
         var city = "Budapest";
-        _cityRepositoryMock.Setup(x => x.GetByName("Budapest")).Returns((City)null);
+        _cityRepositoryMock.Setup(x => x.GetByName("Budapest")).ReturnsAsync((City)null);
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityStringToCity(city))
@@ -89,11 +89,11 @@ public class SunriseSunsetControllerTest
     {
         //Arrange
         var city = "London";
-        _cityRepositoryMock.Setup(x => x.GetByName("Budapest")).Returns((City)null);
+        _cityRepositoryMock.Setup(x => x.GetByName("Budapest")).ReturnsAsync((City)null);
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityStringToCity(city))
-            .Returns(_testCity);
+            .ReturnsAsync(_testCity);
         _sunriseSunsetRepositoryMock.Setup(x => x.GetByDateAndCity(city, _testDateTime))
             .Returns((SunriseSunsetOfCity)null);
         _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<string>()))
@@ -112,11 +112,11 @@ public class SunriseSunsetControllerTest
         //Arrange
         string city = "Budapest";
         string sunriseSunset = "sun";
-        _cityRepositoryMock.Setup(x => x.GetByName("Budapest")).Returns((City)null);
+        _cityRepositoryMock.Setup(x => x.GetByName("Budapest")).ReturnsAsync((City)null);
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityStringToCity(city))
-            .Returns(_testCity);
+            .ReturnsAsync(_testCity);
         _sunriseSunsetRepositoryMock.Setup(x => x.GetByDateAndCity(city, _testDateTime))
             .Returns((SunriseSunsetOfCity)null);
         _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(_testCity.Latitude, _testCity.Longitude, It.IsAny<string>()))
@@ -147,11 +147,11 @@ public class SunriseSunsetControllerTest
             Sunset = "sunset",
             TimeZone = "UTC"
         };
-        _cityRepositoryMock.Setup(x => x.GetByName(_testCity.Name)).Returns((City)null);
+        _cityRepositoryMock.Setup(x => x.GetByName(_testCity.Name)).ReturnsAsync((City)null);
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(_testCity.Name))
             .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityStringToCity(city))
-            .Returns(_testCity);
+            .ReturnsAsync(_testCity);
         _sunriseSunsetRepositoryMock.Setup(x => x.GetByDateAndCity(city, _testDateTime))
             .Returns((SunriseSunsetOfCity)null);
         _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(_testCity.Latitude, _testCity.Longitude, It.IsAny<string>()))
@@ -182,7 +182,7 @@ public class SunriseSunsetControllerTest
             Sunset = "sunset",
             TimeZone = "UTC"
         };
-        _cityRepositoryMock.Setup(x => x.GetByName(_testCity.Name)).Returns(_testCity);
+        _cityRepositoryMock.Setup(x => x.GetByName(_testCity.Name)).ReturnsAsync(_testCity);
         _sunriseSunsetRepositoryMock.Setup(x => x.GetByDateAndCity(_testCity.Name, _testDateTime))
             .Returns((SunriseSunsetOfCity)null);
         _sunriseSunsetProviderMock.Setup(x => x.GetSunriseSunset(_testCity.Latitude, _testCity.Longitude, It.IsAny<string>()))
@@ -212,7 +212,7 @@ public class SunriseSunsetControllerTest
             Sunset = "sunset",
             TimeZone = "UTC"
         };
-        _cityRepositoryMock.Setup(x => x.GetByName(_testCity.Name)).Returns(_testCity);
+        _cityRepositoryMock.Setup(x => x.GetByName(_testCity.Name)).ReturnsAsync(_testCity);
         _sunriseSunsetRepositoryMock.Setup(x => x.GetByDateAndCity(_testCity.Name, DateTime.Today))
             .Returns(sunriseSunsetOfCity);
         
