@@ -6,53 +6,65 @@ namespace SolarWatch.Services.Repository;
 
 public class SunriseSunsetRepository : ISunriseSunsetRepository
 {
-    private SolarWatchApiContext _dbContext;
+    private readonly SolarWatchApiContext _dbContext;
 
     public SunriseSunsetRepository(SolarWatchApiContext context)
     {
         _dbContext = context;
     }
 
-    public IEnumerable<SunriseSunsetOfCity> GetAll()
+    public async Task<IEnumerable<SunriseSunsetOfCity>> GetAll()
     {
-        return _dbContext.SunriseSunsetOfCities.ToList();
+        return await _dbContext.SunriseSunsetOfCities.ToListAsync();
     }
 
-    public SunriseSunsetOfCity? GetByDateAndCity(string city, DateTime date)
+    public async Task<SunriseSunsetOfCity?> GetByDateAndCity(string city, DateTime date)
     {
-        var sunriseSunset = _dbContext.SunriseSunsetOfCities
+        var sunriseSunset = await _dbContext.SunriseSunsetOfCities
             .Include(s => s.City)
-            .FirstOrDefault(s => s.City.Name == city && s.Date == date);
+            .FirstOrDefaultAsync(s => s.City.Name == city && s.Date == date);
 
         return sunriseSunset;
     }
     
-    public SunriseSunsetOfCity? GetByDateAndCity(string city, string? date)
+    public async Task<SunriseSunsetOfCity?> GetByDateAndCity(string city, string? date)
     {
         var parsedDate = DateParser(date);
-        var sunriseSunset = _dbContext.SunriseSunsetOfCities
+        var sunriseSunset = await _dbContext.SunriseSunsetOfCities
             .Include(ss => ss.City) 
-            .FirstOrDefault(ss => ss.City.Name == city && ss.Date == parsedDate);
+            .FirstOrDefaultAsync(ss => ss.City.Name == city && ss.Date == parsedDate);
 
         return sunriseSunset;
     }
 
-    public void Add(SunriseSunsetOfCity sunriseSunset)
+    public async Task Add(SunriseSunsetOfCity sunriseSunset)
     {
         _dbContext.Add(sunriseSunset);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void Delete(SunriseSunsetOfCity sunriseSunset)
+    public async Task Delete(SunriseSunsetOfCity sunriseSunset)
     {
         _dbContext.Remove(sunriseSunset);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void Update(SunriseSunsetOfCity sunriseSunset)
+    public async Task Update(SunriseSunsetOfCity sunriseSunset)
     {  
-        _dbContext.Update(sunriseSunset);
-        _dbContext.SaveChanges();
+        var sunriseSunsetInDb = await _dbContext.SunriseSunsetOfCities.FindAsync(sunriseSunset.Id);
+        
+        if (sunriseSunsetInDb == null)
+        {
+            throw new Exception($"City with ID {sunriseSunset.Id} not found.");
+        }
+
+        sunriseSunsetInDb.Date = sunriseSunset.Date;
+        sunriseSunsetInDb.TimeZone = sunriseSunset.TimeZone;
+        sunriseSunsetInDb.Sunrise = sunriseSunset.Sunrise;
+        sunriseSunsetInDb.Sunset = sunriseSunset.Sunset;
+
+        _dbContext.Update(sunriseSunsetInDb);
+        await _dbContext.SaveChangesAsync();
     }
     
     private DateTime DateParser(string? date)

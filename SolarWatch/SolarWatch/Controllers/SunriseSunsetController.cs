@@ -70,14 +70,14 @@ public class SunriseSunsetController : ControllerBase
         {
             var openWeatherMapData = await _coordinateDataProvider.GetCityFromOpenWeatherMap(cityName);
             city = await _jsonProcessor.ProcessWeatherApiCityStringToCity(openWeatherMapData);
-            _cityRepository.Add(city);
+            await _cityRepository.Add(city);
         }
         return city;
     }
 
     private async Task<SunriseSunsetOfCity> GetSunFromDbOrApi(City city, DateTime dateTime, string? date)
     {
-        var sunriseSunset = _sunriseSunsetRepository.GetByDateAndCity(city.Name, dateTime);
+        var sunriseSunset = await _sunriseSunsetRepository.GetByDateAndCity(city.Name, dateTime);
         if (sunriseSunset == null)
         {
             var sunriseSunsetData = await _sunriseSunsetProvider.GetSunriseSunset(city.Latitude, city.Longitude, date);

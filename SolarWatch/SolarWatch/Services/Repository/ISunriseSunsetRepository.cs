@@ -4,11 +4,11 @@ namespace SolarWatch.Services.Repository;
 
 public interface ISunriseSunsetRepository
 {
-    IEnumerable<SunriseSunsetOfCity> GetAll();
-    SunriseSunsetOfCity? GetByDateAndCity(string city, DateTime date);
-    SunriseSunsetOfCity? GetByDateAndCity(string city, string? date);
+    Task<IEnumerable<SunriseSunsetOfCity>> GetAll();
+    Task<SunriseSunsetOfCity?> GetByDateAndCity(string city, DateTime date);
+    Task<SunriseSunsetOfCity?> GetByDateAndCity(string city, string? date);
 
-    void Add(SunriseSunsetOfCity sunriseSunset);
-    void Delete(SunriseSunsetOfCity sunriseSunset);
-    void Update(SunriseSunsetOfCity sunriseSunset);
+    Task Add(SunriseSunsetOfCity sunriseSunset);
+    Task Delete(SunriseSunsetOfCity sunriseSunset);
+    Task Update(SunriseSunsetOfCity sunriseSunset);
 }
