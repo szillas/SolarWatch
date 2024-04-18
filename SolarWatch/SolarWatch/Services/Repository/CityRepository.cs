@@ -45,7 +45,20 @@ public class CityRepository : ICityRepository
 
     public async Task Update(City city)
     {  
-        _dbContext.Update(city);
+        var cityInDb = await _dbContext.Cities.FindAsync(city.Id);
+
+        if (cityInDb == null)
+        {
+            throw new Exception($"City with ID {city.Id} not found.");
+        }
+        
+        cityInDb.Name = city.Name;
+        cityInDb.Latitude = city.Latitude;
+        cityInDb.Longitude = city.Longitude;
+        cityInDb.State = city.State;
+        cityInDb.Country = city.Country;
+
+        _dbContext.Update(cityInDb);
         await _dbContext.SaveChangesAsync();
     }
 }

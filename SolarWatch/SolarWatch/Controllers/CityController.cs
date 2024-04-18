@@ -85,4 +85,23 @@ public class CityController : ControllerBase
             return StatusCode(500, "An error occured while trying to delete a city.");
         }
     }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateCity(int id, City city)
+    {
+        if (id != city.Id)
+        {
+            return BadRequest("ID in the URL does not match the ID in the request body.");
+        }
+        try
+        {
+            await _cityRepository.Update(city);
+            return Ok(city); 
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An error occured while trying to delete a city.");
+            return StatusCode(500, "An error occured while trying to delete a city.");
+        }
+    }
 }

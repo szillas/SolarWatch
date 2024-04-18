@@ -3,10 +3,10 @@
 public class SunriseSunsetOfCity
 {
     public int Id { get; init; }
-    public DateTime Date { get; init; }
-    public City City { get; init; }
-    public string Sunrise { get; init; }
-    public string Sunset { get; init; }
-    public string? TimeZone { get; init; }
+    public DateTime Date { get; set; }
+    public City City { get; set; }
+    public string Sunrise { get; set; }
+    public string Sunset { get; set; }
+    public string? TimeZone { get; set; }
     
 }
