@@ -22,26 +22,26 @@ public class CityRepository : ICityRepository
     {
         return await _dbContext.Cities.FirstOrDefaultAsync(c => c.Name == name);
     }
-    public City? GetByNameAndCountry(string name, string country)
+    public async Task<City?> GetByNameAndCountry(string name, string country)
     {
-        return _dbContext.Cities.FirstOrDefault(c => c.Name == name && c.Country == country);
+        return await _dbContext.Cities.FirstOrDefaultAsync(c => c.Name == name && c.Country == country);
     }
 
-    public void Add(City city)
+    public async Task Add(City city)
     {
         _dbContext.Add(city);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void Delete(City city)
+    public async Task Delete(City city)
     {
         _dbContext.Remove(city);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void Update(City city)
+    public async Task Update(City city)
     {  
         _dbContext.Update(city);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 }

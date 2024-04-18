@@ -6,8 +6,8 @@ public interface ICityRepository
 {
     Task<IEnumerable<City>> GetAll();
     Task<City?> GetByName(string name);
-    City? GetByNameAndCountry(string name, string country);
-    void Add(City city);
-    void Delete(City city);
-    void Update(City city);
+    Task<City?> GetByNameAndCountry(string name, string country);
+    Task Add(City city);
+    Task Delete(City city);
+    Task Update(City city);
 }
