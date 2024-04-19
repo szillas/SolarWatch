@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SolarWatch.Contracts.SunriseSunset;
 using SolarWatch.Model;
 using SolarWatch.Model.NotInUse;
 using SolarWatch.Services.Extensions;
@@ -34,7 +35,7 @@ public class SunriseSunsetController : ControllerBase
         _sunriseSunsetRepository = sunriseSunsetRepository;
     }
     
-    [HttpGet("GetSunriseSunset"), Authorize]
+    [HttpGet("GetSunriseSunset")]
     public async Task<ActionResult<SunriseSunsetOfCity>> GetSunriseSunset(string cityName, string? date)
     {
         try
@@ -62,10 +63,91 @@ public class SunriseSunsetController : ControllerBase
             return NotFound("Error getting sunrise/sunset");
         }
     }
+    
+    [HttpPost]
+    public async Task<IActionResult> AddSunriseSunset(SunriseSunsetDto sunriseSunsetDto)
+    {
+        var city = await _cityRepository.GetByNameAndCountry(sunriseSunsetDto.CityName, sunriseSunsetDto.Country);
+        if (city == null)
+        {
+            return BadRequest($"City with name '{sunriseSunsetDto.CityName}' and country '{sunriseSunsetDto.Country}' not found.");
+        }
+        
+        var sunriseSunset = new SunriseSunsetOfCity
+        {
+            Date = sunriseSunsetDto.Date,
+            Sunrise = sunriseSunsetDto.Sunrise,
+            Sunset = sunriseSunsetDto.Sunset,
+            TimeZone = sunriseSunsetDto.TimeZone,
+            City = city
+        };
+        
+        try
+        {
+            await _sunriseSunsetRepository.Add(sunriseSunset);
+            return CreatedAtAction(nameof(GetSunriseSunset), new { id = sunriseSunset.Id }, sunriseSunset);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An error occured while trying to add sunrise/sunset data.");
+            return StatusCode(500, "An error occured while trying to add sunrise/sunset data.");
+        }
+    }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteSunriseSunset(int id)
+    {
+        try
+        {
+            var sunriseSunsetInDb = await _sunriseSunsetRepository.GetById(id);
+            if (sunriseSunsetInDb == null)
+            {
+                return NotFound($"Sunrise/sunset with id {id} does not exist in the db.");
+            }
+            await _sunriseSunsetRepository.Delete(sunriseSunsetInDb);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An error occured while trying to delete Sunrise/Sunset from Db.");
+            return StatusCode(500, "An error occured while trying to delete Sunrise/Sunset from Db.");
+        }
+    }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateSunriseSunset(int id, SunriseSunsetOfCity sunriseSunset)
+    {
+        if (id != sunriseSunset.Id)
+        {
+            return BadRequest("ID in the URL does not match the ID in the request body.");
+        }
+        try
+        {
+            await _sunriseSunsetRepository.Update(sunriseSunset);
+            return Ok(sunriseSunset); 
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An error occured while trying to modify sunrise/sunset with id {id}.", id);
+            return StatusCode(500, $"An error occured while trying to modify sunrise/sunset with id {id}.");
+        }
+    }
 
     private async Task<City> GetCityFromDbOrApi(string cityName)
     {
         var city = await _cityRepository.GetByName(cityName);
+        if (city == null)
+        {
+            var openWeatherMapData = await _coordinateDataProvider.GetCityFromOpenWeatherMap(cityName);
+            city = await _jsonProcessor.ProcessWeatherApiCityStringToCity(openWeatherMapData);
+            await _cityRepository.Add(city);
+        }
+        return city;
+    }
+    
+    private async Task<City> GetCityFromDbOrApiWithCountryCode(string cityName, string country)
+    {
+        var city = await _cityRepository.GetByNameAndCountry(cityName, country);
         if (city == null)
         {
             var openWeatherMapData = await _coordinateDataProvider.GetCityFromOpenWeatherMap(cityName);
@@ -82,7 +164,7 @@ public class SunriseSunsetController : ControllerBase
         {
             var sunriseSunsetData = await _sunriseSunsetProvider.GetSunriseSunset(city.Latitude, city.Longitude, date);
             sunriseSunset = _jsonProcessor.ProcessSunriseSunsetApiStringToSunriseSunset(city, dateTime, sunriseSunsetData);
-            _sunriseSunsetRepository.Add(sunriseSunset);
+            await _sunriseSunsetRepository.Add(sunriseSunset);
         }
         return sunriseSunset;
     }

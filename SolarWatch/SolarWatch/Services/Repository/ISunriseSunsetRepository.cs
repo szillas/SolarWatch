@@ -5,6 +5,7 @@ namespace SolarWatch.Services.Repository;
 public interface ISunriseSunsetRepository
 {
     Task<IEnumerable<SunriseSunsetOfCity>> GetAll();
+    Task<SunriseSunsetOfCity?> GetById(int id);
     Task<SunriseSunsetOfCity?> GetByDateAndCity(string city, DateTime date);
     Task<SunriseSunsetOfCity?> GetByDateAndCity(string city, string? date);
 

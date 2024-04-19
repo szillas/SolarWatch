@@ -56,6 +56,12 @@ public class CityController : ControllerBase
     {
         try
         {
+            var cityInDb = await _cityRepository.GetByNameAndCountry(city.Name, city.Country);
+            if (cityInDb != null)
+            {
+                return BadRequest($"A city with name '{city.Name}' and country '{city.Country}' already exists in the database.");
+            }
+            
             await _cityRepository.Add(city);
             return CreatedAtAction(nameof(GetCity), new { country = city.Country, city = city.Name }, city);
         }
@@ -100,8 +106,8 @@ public class CityController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "An error occured while trying to delete a city.");
-            return StatusCode(500, "An error occured while trying to delete a city.");
+            _logger.LogError(e, "An error occured while trying to modify the city with id {id}.", id);
+            return StatusCode(500, $"An error occured while trying to modify the city with id {id}.");
         }
     }
 }

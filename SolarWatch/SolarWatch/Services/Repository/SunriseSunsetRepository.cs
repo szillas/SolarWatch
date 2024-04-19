@@ -17,6 +17,11 @@ public class SunriseSunsetRepository : ISunriseSunsetRepository
     {
         return await _dbContext.SunriseSunsetOfCities.ToListAsync();
     }
+    
+    public async Task<SunriseSunsetOfCity?> GetById(int id)
+    {
+        return await _dbContext.SunriseSunsetOfCities.FirstOrDefaultAsync(c => c.Id == id);
+    }
 
     public async Task<SunriseSunsetOfCity?> GetByDateAndCity(string city, DateTime date)
     {
@@ -67,7 +72,7 @@ public class SunriseSunsetRepository : ISunriseSunsetRepository
         await _dbContext.SaveChangesAsync();
     }
     
-    private DateTime DateParser(string? date)
+    private static DateTime DateParser(string? date)
     {
         if (string.IsNullOrEmpty(date))
         {
