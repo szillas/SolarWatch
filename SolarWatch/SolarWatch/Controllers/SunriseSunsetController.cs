@@ -145,12 +145,34 @@ public class SunriseSunsetController : ControllerBase
         return city;
     }
     
-    private async Task<City> GetCityFromDbOrApiWithCountryCode(string cityName, string country)
+    //Working on this
+    private async Task<City> GetCityFromDbOrApiWithCountryCode(string cityName, string? country, string? state)
     {
-        var city = await _cityRepository.GetByNameAndCountry(cityName, country);
+        City? city;
+
+        if (country == null && state == null)
+        {
+            city = await _cityRepository.GetByName(cityName);
+        }
+        else if ((country == "US" || country == "USA") && state != null)
+        {
+            city = await _cityRepository.GetByName(cityName, state);
+        }
+        else if (country != null)
+        {
+            city = await _cityRepository.GetByNameAndCountry(cityName, country);
+        }
+        else
+        {
+            // Handle invalid or unexpected input
+            throw new ArgumentException("Invalid country or state provided.");
+        }
+        
+        /*var city = await _cityRepository.GetByNameAndCountry(cityName, country);
+        var city2 = await _cityRepository.GetByName(cityName, state);*/
         if (city == null)
         {
-            var openWeatherMapData = await _coordinateDataProvider.GetCityFromOpenWeatherMap(cityName);
+            var openWeatherMapData = await _coordinateDataProvider.GetCityFromOpenWeatherMap(cityName, country);
             city = await _jsonProcessor.ProcessWeatherApiCityStringToCity(openWeatherMapData);
             await _cityRepository.Add(city);
         }

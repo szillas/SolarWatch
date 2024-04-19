@@ -26,6 +26,12 @@ public class CityRepository : ICityRepository
     {
         return await _dbContext.Cities.FirstOrDefaultAsync(c => c.Name == name);
     }
+    
+    public async Task<City?> GetByName(string city, string state)
+    {
+        return await _dbContext.Cities.FirstOrDefaultAsync(c => 
+            (c.Country == "US" ||  c.Country == "USA") && c.Name == city && c.State == state);
+    }
     public async Task<City?> GetByNameAndCountry(string name, string country)
     {
         return await _dbContext.Cities.FirstOrDefaultAsync(c => c.Name == name && c.Country == country);

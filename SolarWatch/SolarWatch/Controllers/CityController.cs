@@ -51,6 +51,25 @@ public class CityController : ControllerBase
         }
     }
     
+    [HttpGet("usa/{state}/{city}")]
+    public async Task<IActionResult> GetUsaCity(string state, string city)
+    {
+        try
+        {
+            var cityInRepo = await _cityRepository.GetByName(city, state);
+            if (cityInRepo == null)
+            {
+                return NotFound("City is not found!");
+            }
+            return Ok(cityInRepo);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An error occured while trying to get the city.");
+            return StatusCode(500, "An error occured while trying to get the city.");
+        }
+    }
+    
     [HttpPost]
     public async Task<IActionResult> AddCity(City city)
     {
