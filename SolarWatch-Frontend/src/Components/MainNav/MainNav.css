@@ -1,0 +1,137 @@
+svg {
+    width: 25px;
+}
+
+header {
+    position: fixed;
+    z-index: 10;
+    width: 100vw;
+    background-color: #a5d9fc;
+}
+
+#navigation {
+    width: 100vw;
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    grid-template-rows: 50px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 100;
+}
+
+header .logout {
+    cursor: pointer;
+    font-weight: bolder;
+}
+
+#nav-logo {
+    font-weight: bolder;
+    text-decoration: none;
+    color: #000000;
+}
+
+#nav-logo:hover {
+    color: #ff0000;
+}
+
+#nav-ads {
+    font-weight: bold;
+    text-decoration: none;
+    color: #000000;
+}
+
+header .menu {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    font-weight: 500;
+    font-weight: bolder;
+}
+
+.logout:hover {
+    color: #ff0000;
+}
+
+#nav-ads:hover{
+    color: #ff0000;
+}
+
+a:-webkit-any-link {
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+a:-webkit-any-link:hover {
+    color: rgb(255, 0, 0);
+    cursor: pointer;
+    text-decoration: none;
+
+}
+
+.user-menu {
+    display: flex;
+}
+
+.user-menu-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-menu .user-menu-span {
+    font-size: x-small;
+    margin-top: 0;
+}
+
+#search {
+    margin-right: 10px;
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 60px;
+    background-color: #FFC470;
+    border-radius: 10px;
+    border: 1px solid #DD5746;
+    padding: 20px;
+    border-bottom-width: 2px;
+}
+
+.dropdown-menu h3{
+    margin-top: 0;
+}
+
+.dropdown-menu li{
+    cursor: pointer;
+}
+
+#navigation-login-form{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 300px;
+}
+
+
+#navigation-login-form label{
+    display: flex;
+    justify-content: space-between;
+}
+
+#navigation-login-form input {
+    border-radius: 5px;
+    padding: 5px;
+    border-width: 0 0 2px 0;
+}
+
+.user-menu-items{
+    cursor: pointer;
+}

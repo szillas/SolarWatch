@@ -13,7 +13,7 @@ using SolarWatch.Services.Repository;
 namespace SolarWatch.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class SunriseSunsetController : ControllerBase
 {
     private readonly ILogger<SunriseSunsetController> _logger;
@@ -164,7 +164,6 @@ public class SunriseSunsetController : ControllerBase
         }
         else
         {
-            // Handle invalid or unexpected input
             throw new ArgumentException("Invalid country or state provided.");
         }
         
