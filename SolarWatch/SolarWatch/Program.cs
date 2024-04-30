@@ -50,6 +50,7 @@ app.MapControllers();
 
 app.Run();
 
+
 void AddServices()
 {
     builder.Services.AddControllers();
@@ -146,3 +147,5 @@ void AddIdentity()
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<UsersContext>();
 }
+
+public partial class Program { }
