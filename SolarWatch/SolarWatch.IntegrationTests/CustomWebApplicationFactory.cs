@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Globalization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -8,35 +9,88 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SolarWatch.Contracts;
 using SolarWatch.Data;
 using SolarWatch.Data.SeedData;
+using SolarWatch.Model;
 
 namespace SolarWatch.IntegrationTests;
 
+//Used to create instances of the web application for testing
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
-            var dbContext = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<UsersContext>));
-
+            //This line retrieves the DbContextOptions for the UsersContext from the collection of services. It checks
+            //if such a service is already registered.
+            var dbContext = services
+                .SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<UsersContext>));
             if (dbContext != null)
                 services.Remove(dbContext);
-
+            
+            var solarWatchDbContextOptions = services
+                .SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<SolarWatchApiContext>));
+            if (solarWatchDbContextOptions != null)
+            {
+                services.Remove(solarWatchDbContextOptions);
+            }
+            
+            //This line creates a new ServiceProvider by configuring an in-memory database provider for Entity
+            //Framework. This is used for dependency injection during testing.
             var serviceProvider = new ServiceCollection().AddEntityFrameworkInMemoryDatabase().BuildServiceProvider();
 
+            //Here, the UsersContext is added to the services collection with AddDbContext. It configures the context
+            //to use an in-memory database named "InMemoryAuthTest" and specifies the internal service provider created earlier.
+            //This line creates a new instance of ServiceCollection, configures it to use the Entity Framework in-memory
+            //database provider , and then builds a ServiceProvider from it (BuildServiceProvider()).
+            //This ServiceProvider is typically used internally within the test setup for dependency injection purposes,
+            //such as providing a database context for testing.
             services.AddDbContext<UsersContext>(options =>
             {
-                options.UseInMemoryDatabase("InMemoryAuthTest");
+                options.UseInMemoryDatabase("InMemoryTest");
                 options.UseInternalServiceProvider(serviceProvider);
             });
+            
+            services.AddDbContext<SolarWatchApiContext>(options =>
+            {
+                options.UseInMemoryDatabase("InMemoryTest");
+                options.UseInternalServiceProvider(serviceProvider);
+            });
+            
+            //The services collection is built into a ServiceProvider. This allows resolving services from the collection.
+            //This line builds a ServiceProvider from the existing ServiceCollection named services. This ServiceCollection
+            //was provided as an argument to the ConfigureServices method within the ConfigureWebHost method of the
+            //WebApplicationFactory. It is used by the ASP.NET Core application to configure services during startup.
             var sp = services.BuildServiceProvider();
 
+            //A scoped service provider is created to manage the scope of service lifetimes. Then, an instance of the
+            //UsersContext is retrieved from the scoped service provider.
             using var scope = sp.CreateScope();
             using var appContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
             appContext.Database.EnsureCreated();
             
+            using var solarWatchDbContext = scope.ServiceProvider.GetRequiredService<SolarWatchApiContext>();
+            solarWatchDbContext.Database.EnsureCreated();
+            City initCity = new City
+            {
+                Name = "London", Latitude = 51.5074, Longitude = 0.1278, Country = "UK"
+            };
+            solarWatchDbContext.Cities.Add(initCity);
+            solarWatchDbContext.SaveChanges();
+            var datetime = DateTime.ParseExact("2024-05-01", "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            solarWatchDbContext.SunriseSunsetOfCities.Add(new SunriseSunsetOfCity
+            {
+                City = initCity,
+                Date = datetime,
+                Sunrise = "00:00:00",
+                Sunset = "20:00:00",
+                TimeZone = "UTC"
+            });
+            solarWatchDbContext.SaveChanges();
+
         });
     }
 }

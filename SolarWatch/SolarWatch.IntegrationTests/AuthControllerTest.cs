@@ -114,4 +114,6 @@ public class AuthControllerTest : IClassFixture<CustomWebApplicationFactory>
 
         _outputHelper.WriteLine($"Token: {authToken}");
     }
+    
+    
 }
