@@ -76,7 +76,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             using var solarWatchDbContext = scope.ServiceProvider.GetRequiredService<SolarWatchApiContext>();
             solarWatchDbContext.Database.EnsureCreated();
             
-            SeedUsersContext(usersContext);
+            //SeedUsersContext(usersContext);
             
             City initCity = new City
             {
