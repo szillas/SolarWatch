@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SolarWatch.Contracts;
@@ -68,11 +69,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             //A scoped service provider is created to manage the scope of service lifetimes. Then, an instance of the
             //UsersContext is retrieved from the scoped service provider.
             using var scope = sp.CreateScope();
-            using var appContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
-            appContext.Database.EnsureCreated();
+            using var usersContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
+            usersContext.Database.EnsureCreated();
             
             using var solarWatchDbContext = scope.ServiceProvider.GetRequiredService<SolarWatchApiContext>();
             solarWatchDbContext.Database.EnsureCreated();
+            
+            SeedUsersContext(usersContext);
+            
             City initCity = new City
             {
                 Name = "London", Latitude = 51.5074, Longitude = 0.1278, Country = "UK"
@@ -90,10 +94,59 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 TimeZone = "UTC"
             });
             solarWatchDbContext.SaveChanges();
-
         });
     }
+    
+    
+    private void SeedUsersContext(UsersContext context)
+    {
+        // Create roles if they don't exist
+        var roleManager = context.GetService<RoleManager<IdentityRole>>();
+        var configuration = context.GetService<IConfiguration>();
+        var adminRoleName = configuration?["RoleNames:Admin"];
+        var userRoleName = configuration?["RoleNames:User"];
+
+        if (roleManager != null && adminRoleName != null && userRoleName != null)
+        {
+            if (!roleManager.Roles.Any(r => r.Name == adminRoleName))
+            {
+                roleManager.CreateAsync(new IdentityRole(adminRoleName)).Wait();
+            }
+
+            if (!roleManager.Roles.Any(r => r.Name == userRoleName))
+            {
+                roleManager.CreateAsync(new IdentityRole(userRoleName)).Wait();
+            }
+        }
+
+        // Create admin user if it doesn't exist
+        var userManager = context.GetService<UserManager<IdentityUser>>();
+        var adminEmail = "admin@admin.com";
+
+        if (userManager != null && adminRoleName != null)
+        {
+            if (userManager.FindByEmailAsync(adminEmail).Result == null)
+            {
+                var adminUser = new IdentityUser
+                {
+                    UserName = "admin",
+                    Email = adminEmail
+                };
+
+                var result = userManager.CreateAsync(adminUser, "admin123").Result;
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(adminUser, adminRoleName).Wait();
+                }
+            }
+        }
+    }
+    
+    
+    
 }
+
+
 
 /*
  builder.ConfigureTestServices(services =>
