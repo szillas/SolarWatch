@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Net;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -21,6 +22,7 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
     private readonly Mock<ICoordinateDataProvider> _coordinateDataProviderMock;
     private readonly Mock<IJsonProcessor> _jsonProcessorMock;
     private readonly Mock<ISunriseSunsetProvider> _sunriseSunsesProvider;
+    
     
 
     public SunriseSunsetControllerTest(ITestOutputHelper outputHelper)
