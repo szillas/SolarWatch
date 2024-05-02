@@ -16,7 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var issuerKey = builder.Configuration["SolarWatch:SecretKey"];
 var sqlServerConnectionString = builder.Configuration.GetConnectionString("SqlServerDefault");
-var openWeatherKey = builder.Configuration["OpenWeatherMapKey"];
+
+var openWeatherKey = builder.Configuration["SolarWatch:OpenWeatherMapKey"];
 
 // Add services to the container.
 AddServices();
@@ -55,7 +56,6 @@ void AddServices()
 {
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
-   // builder.Services.AddSingleton<ICoordinateDataProvider, OpenWeatherCoordDataProviderApi>();
     builder.Services.AddSingleton<ICoordinateDataProvider>(provider => 
         new OpenWeatherCoordDataProviderApi(
             provider.GetRequiredService<ILogger<OpenWeatherCoordDataProviderApi>>(),
