@@ -11,7 +11,7 @@ public class JsonProcessorTest
 {
     private JsonProcessor _jsonProcessor;
 
-    private City _testCity = new City
+    private readonly City _testCity = new City
     {
         Name = "London",
         Latitude = 10,
@@ -19,7 +19,7 @@ public class JsonProcessorTest
         Country = "UK",
         State = "UK"
     };
-    private DateTime _testDateTime = new DateTime(2024, 01, 01);
+    private readonly DateTime _testDateTime = new DateTime(2024, 01, 01);
 
     [SetUp]
     public void Setup()
@@ -38,14 +38,20 @@ public class JsonProcessorTest
         City city2 = await _jsonProcessor.ProcessWeatherApiCityStringToCity(data2);
 
         // Assert
-        Assert.IsNotNull(city);
-        Assert.That(city.Latitude, Is.EqualTo(51.5074));
-        Assert.That(city.State, Is.EqualTo(null));
-        Assert.IsNotNull(city2);
-        Assert.That(city2.Latitude, Is.EqualTo(51.5074));
-        Assert.That(city2.State, Is.EqualTo("EU"));
+        Assert.That(city, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(city.Latitude, Is.EqualTo(51.5074));
+            Assert.That(city.State, Is.EqualTo(null));
+        });
+        Assert.That(city2, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(city2.Latitude, Is.EqualTo(51.5074));
+            Assert.That(city2.State, Is.EqualTo("EU"));
+        });
     }
-    
+
     [Test]
     public void ProcessWeatherApiCityToCoordinateEmptyDataThrowsJsonException()
     {
@@ -93,26 +99,12 @@ public class JsonProcessorTest
         Assert.That(sunriseSunset.Date, Is.EqualTo(_testDateTime));
     }
     
-    /*[Test]
-    public void ProcessSunriseSunsetApiThrowsNewFormatExceptionIfDateFormatIsNotCorrect()
-    {
-        // Arrange
-        string data = "{\n  \"results\": {\n    \"sunrise\": \"5:59:53 AM\",\n    \"sunset\": \"6:42:17 PM\"\n  },\n  \"status\": \"OK\",\n  \"tzid\": \"UTC\"\n}";
-        string city = "London";
-        string date = "notCorrectDate";
-
-        // Assert
-        Assert.Throws<FormatException>(() =>  _jsonProcessor.ProcessSunriseSunsetApi(city, date, data));
-    }*/
-    
-    
     [Test]
     public void ProcessSunriseSunsetApiThrowsNewFormatExceptionIfDataIsNotObject()
     {
         // Arrange
         string data = "[]";
-
-
+        
         // Act and Assert
         Assert.Throws<JsonException>(() => _jsonProcessor.ProcessSunriseSunsetApiStringToSunriseSunset(_testCity, _testDateTime, data));
     }
