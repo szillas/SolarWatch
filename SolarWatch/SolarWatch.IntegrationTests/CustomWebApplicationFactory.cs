@@ -15,7 +15,9 @@ using SolarWatch.Contracts;
 using SolarWatch.Data;
 using SolarWatch.Data.SeedData;
 using SolarWatch.Model;
+using SolarWatch.Services.JsonProcessor;
 using SolarWatch.Services.Providers.CoordinateProvider;
+using SolarWatch.Services.Providers.SunriseSunsetProvider;
 
 namespace SolarWatch.IntegrationTests;
 
@@ -23,7 +25,9 @@ namespace SolarWatch.IntegrationTests;
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
 
-    public Mock<ICoordinateDataProvider> coordinateDataProviderMock { get; } = new();
+    public Mock<ICoordinateDataProvider> CoordinateDataProviderMock { get; } = new();
+    public Mock<IJsonProcessor> JsonProcessorMock { get; } = new();
+    public Mock<ISunriseSunsetProvider> SunriseSunsetProviderMock { get; } = new();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -48,7 +52,19 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             if (coordinateDataProvider != null)
                 services.Remove(coordinateDataProvider);
             
-            services.AddSingleton<ICoordinateDataProvider>(_ => coordinateDataProviderMock.Object);
+            var jsonProcessor = services
+                .SingleOrDefault(d => d.ServiceType == typeof(IJsonProcessor));
+            if (jsonProcessor != null)
+                services.Remove(jsonProcessor);
+            
+            var sunriseSunsetProvider = services
+                .SingleOrDefault(d => d.ServiceType == typeof(ICoordinateDataProvider));
+            if (sunriseSunsetProvider != null)
+                services.Remove(sunriseSunsetProvider);
+            
+            services.AddSingleton<ICoordinateDataProvider>(_ => CoordinateDataProviderMock.Object);
+            services.AddSingleton<IJsonProcessor>(_ => JsonProcessorMock.Object);
+            services.AddSingleton<ISunriseSunsetProvider>(_ => SunriseSunsetProviderMock.Object);
             
             //This line creates a new ServiceProvider by configuring an in-memory database provider for Entity
             //Framework. This is used for dependency injection during testing.

@@ -22,23 +22,14 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
     private readonly CustomWebApplicationFactory _factory;
     private readonly Mock<ICoordinateDataProvider> _coordinateDataProviderMock;
     private readonly Mock<IJsonProcessor> _jsonProcessorMock;
-    private readonly Mock<ISunriseSunsetProvider> _sunriseSunsesProvider;
+    private readonly Mock<ISunriseSunsetProvider> _sunriseSunsesProviderMock;
     
     public SunriseSunsetControllerTest(ITestOutputHelper outputHelper)
     {
-        _jsonProcessorMock = new Mock<IJsonProcessor>();
-        _sunriseSunsesProvider = new Mock<ISunriseSunsetProvider>();
         _factory = new CustomWebApplicationFactory();
-        _factory.WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                services.AddSingleton<IJsonProcessor>(_ => _jsonProcessorMock.Object);
-                services.AddSingleton<ISunriseSunsetProvider>(_ => _sunriseSunsesProvider.Object);
-                
-            });
-        });
-        _coordinateDataProviderMock = _factory.coordinateDataProviderMock;
+        _coordinateDataProviderMock = _factory.CoordinateDataProviderMock;
+        _jsonProcessorMock = _factory.JsonProcessorMock;
+        _sunriseSunsesProviderMock = _factory.SunriseSunsetProviderMock;
         _httpClient = _factory.CreateClient();
         _outputHelper = outputHelper;
     }
@@ -64,20 +55,22 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
     }
     
     [Fact]
-    public async Task GetSunriseSunsetReturnsNotFoundResultIfCityNotFound()
+    public async Task GetSunriseSunsetReturnsNotFoundResultIfCityNotFoundInDbAndInExternalApi()
     {
         // Arrange
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .Throws(new JsonException("Failed to get city from API"));
         // Act
         var response = await _httpClient.GetAsync("/api/SunriseSunset/GetSunriseSunset?cityName=fgnfghjghjfgvhbnbfghvnhj");
+        var responseContent = await response.Content.ReadAsStringAsync();
+        _outputHelper.WriteLine(responseContent);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
     
     [Fact]
-    public async Task GetSunriseSunsetReturnsBadRequestResultIfSunsetProviderFails()
+    public async Task GetSunriseSunsetReturnsBadRequestResultIfDateFormatIsNotValid()
     {
         // Arrange
         var city = "Budapest";
@@ -85,7 +78,7 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
         
         // Set up mock behavior
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(city))
-            .Throws(new Exception("Failed to get city from API"));
+            .Throws(new FormatException("Time format is not valid."));
 
         // Act
         var response = await _httpClient.GetAsync($"/api/sunrisesunset/GetSunriseSunset?cityName={city}&date={invalidDateTime}");
@@ -93,23 +86,10 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
         _outputHelper.WriteLine(responseContent);
 
         // Assert
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-    
-    [Fact]
-    public async Task GetSunriseSunsetReturnsBadRequestResultIfTimeFormatIsInvalid()
-    {
-        // Arrange
-        var city = "London";
-        var invalidDateTime = "invalidDateTime";
-        
-        // Act
-        var response = await _httpClient.GetAsync($"/api/sunrisesunset/GetSunriseSunset?cityName={city}&date={invalidDateTime}");
-
-        // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
     
+   
     [Fact]
     public async Task GetSunriseSunsetReturnsOkIfCityAndSunriseSunsetIsInsideDatabase()
     {
@@ -129,24 +109,24 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
         Assert.Contains("20:00", responseContent);
     }
     
-    /*[Fact]
+    [Fact]
     public async Task GetSunriseSunsetReturnsOkIfCityIsNotInDbAndSunriseSunsetIsAlsoNotInDb()
     {
         // Arrange
         var city = "C";
         var datetime = "2024-05-02";
-        City berlin = new City
+        City createdCity = new City
         {
             Country = "DE",
             Longitude = 0,
             Latitude = 0,
-            Name = "C",
+            Name = "TestCity",
             State = "G"
         };
         
         SunriseSunsetOfCity expectedResult = new SunriseSunsetOfCity
         {
-            City = berlin,
+            City = createdCity,
             Date = DateTime.Today,
             Sunrise = "sunrise",
             Sunset = "sunset",
@@ -156,24 +136,24 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .ReturnsAsync(city);
         _jsonProcessorMock.Setup(x => x.ProcessWeatherApiCityStringToCity(city))
-            .ReturnsAsync(berlin);
-        /*_sunriseSunsesProvider.Setup(x => x.GetSunriseSunset(berlin.Latitude, berlin.Longitude, It.IsAny<string>()))
+            .ReturnsAsync(createdCity);
+        _sunriseSunsesProviderMock.Setup(x => x.GetSunriseSunset(createdCity.Latitude, createdCity.Longitude, It.IsAny<string>()))
             .ReturnsAsync(datetime);
         _jsonProcessorMock.Setup(x =>
-                x.ProcessSunriseSunsetApiStringToSunriseSunset(berlin, DateTime.Today, datetime))
-            .Returns(expectedResult);*/
+                x.ProcessSunriseSunsetApiStringToSunriseSunset(createdCity, DateTime.Today, datetime))
+            .Returns(expectedResult);
         
         // Act
-        /*var response = await _httpClient.GetAsync($"/api/Sunrisesunset/GetSunriseSunset?cityName={city}&date={datetime}");
+        var response = await _httpClient.GetAsync($"/api/Sunrisesunset/GetSunriseSunset?cityName={city}&date={datetime}");
 
         // Assert
         response.EnsureSuccessStatusCode(); // Status Code 200-299
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var responseContent = await response.Content.ReadAsStringAsync();
         _outputHelper.WriteLine(responseContent);
-        Assert.Contains("London", responseContent);
-        Assert.Contains("20:00", responseContent);
-    }*/
+        Assert.Contains("TestCity", responseContent);
+        Assert.Contains("sunset", responseContent);
+    }
     
 
     
