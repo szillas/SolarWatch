@@ -14,11 +14,11 @@ public class TokenService : ITokenService
     private readonly string _issuer;
     private readonly string _audience;
 
-    public TokenService(string issuerKey, string issuer, string audience)
+    public TokenService(IConfiguration configuration)
     {
-        _issuerKey = issuerKey;
-        _issuer = issuer;
-        _audience = audience;
+        _issuerKey = configuration["SolarWatch:SecretKey"] ?? throw new InvalidOperationException();
+        _issuer = configuration["Jwt:Issuer"] ?? throw new InvalidOperationException();
+        _audience = configuration["Jwt:Audience"] ?? throw new InvalidOperationException();
     }
 
     public string CreateToken(IdentityUser user, string? role)

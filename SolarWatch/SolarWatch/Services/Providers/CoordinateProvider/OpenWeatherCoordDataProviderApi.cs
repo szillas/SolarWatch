@@ -5,10 +5,10 @@ public class OpenWeatherCoordDataProviderApi : ICoordinateDataProvider
     private readonly ILogger<OpenWeatherCoordDataProviderApi> _logger;
     private readonly string _openWeatherApiKey;
     
-    public OpenWeatherCoordDataProviderApi(ILogger<OpenWeatherCoordDataProviderApi> logger, string apiKey)
+    public OpenWeatherCoordDataProviderApi(ILogger<OpenWeatherCoordDataProviderApi> logger, IConfiguration configuration)
     {
         _logger = logger;
-        _openWeatherApiKey = apiKey;
+        _openWeatherApiKey = configuration["SolarWatch:OpenWeatherMapKey"] ?? throw new InvalidOperationException();
     }
 
     public async Task<string> GetCityFromOpenWeatherMap(string city)

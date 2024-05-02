@@ -17,8 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 var issuerKey = builder.Configuration["SolarWatch:SecretKey"];
 var sqlServerConnectionString = builder.Configuration.GetConnectionString("SqlServerDefault");
 
-var openWeatherKey = builder.Configuration["SolarWatch:OpenWeatherMapKey"];
-
 // Add services to the container.
 AddServices();
 ConfigureSwagger();
@@ -56,18 +54,13 @@ void AddServices()
 {
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSingleton<ICoordinateDataProvider>(provider => 
-        new OpenWeatherCoordDataProviderApi(
-            provider.GetRequiredService<ILogger<OpenWeatherCoordDataProviderApi>>(),
-            openWeatherKey
-        ));
+    builder.Services.AddSingleton<ICoordinateDataProvider, OpenWeatherCoordDataProviderApi>();
     builder.Services.AddSingleton<ISunriseSunsetProvider, SunriseSunsetApi>();
     builder.Services.AddSingleton<IJsonProcessor, JsonProcessor>();
     builder.Services.AddScoped<ICityRepository, CityRepository>();
     builder.Services.AddScoped<ISunriseSunsetRepository, SunriseSunsetRepository>();
     builder.Services.AddScoped<IAuthService, AuthService>();
-    builder.Services.AddScoped<ITokenService>(provider =>
-        new TokenService(issuerKey, builder.Configuration["Jwt:Issuer"], builder.Configuration["Jwt:Audience"]));
+    builder.Services.AddScoped<ITokenService, TokenService>();
     builder.Services.AddScoped<AuthenticationSeeder>();
 }
 
@@ -125,7 +118,7 @@ void AddAuthentication()
                 ValidIssuer = builder.Configuration["Jwt:Issuer"],
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(issuerKey)
+                    Encoding.UTF8.GetBytes(issuerKey ?? throw new InvalidOperationException())
                 ),
             };
         });
