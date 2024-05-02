@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Net;
+using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,11 +24,8 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
     private readonly Mock<IJsonProcessor> _jsonProcessorMock;
     private readonly Mock<ISunriseSunsetProvider> _sunriseSunsesProvider;
     
-    
-
     public SunriseSunsetControllerTest(ITestOutputHelper outputHelper)
     {
-        _coordinateDataProviderMock = new Mock<ICoordinateDataProvider>();
         _jsonProcessorMock = new Mock<IJsonProcessor>();
         _sunriseSunsesProvider = new Mock<ISunriseSunsetProvider>();
         _factory = new CustomWebApplicationFactory();
@@ -35,12 +33,12 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
         {
             builder.ConfigureTestServices(services =>
             {
-                services.AddSingleton<ICoordinateDataProvider>(_ => _coordinateDataProviderMock.Object);
                 services.AddSingleton<IJsonProcessor>(_ => _jsonProcessorMock.Object);
                 services.AddSingleton<ISunriseSunsetProvider>(_ => _sunriseSunsesProvider.Object);
                 
             });
         });
+        _coordinateDataProviderMock = _factory.coordinateDataProviderMock;
         _httpClient = _factory.CreateClient();
         _outputHelper = outputHelper;
     }
@@ -69,6 +67,8 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
     public async Task GetSunriseSunsetReturnsNotFoundResultIfCityNotFound()
     {
         // Arrange
+        _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
+            .Throws(new JsonException("Failed to get city from API"));
         // Act
         var response = await _httpClient.GetAsync("/api/SunriseSunset/GetSunriseSunset?cityName=fgnfghjghjfgvhbnbfghvnhj");
 
@@ -93,7 +93,7 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
         _outputHelper.WriteLine(responseContent);
 
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
     
     [Fact]

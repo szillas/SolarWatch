@@ -15,12 +15,16 @@ using SolarWatch.Contracts;
 using SolarWatch.Data;
 using SolarWatch.Data.SeedData;
 using SolarWatch.Model;
+using SolarWatch.Services.Providers.CoordinateProvider;
 
 namespace SolarWatch.IntegrationTests;
 
 //Used to create instances of the web application for testing
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
+
+    public Mock<ICoordinateDataProvider> coordinateDataProviderMock { get; } = new();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
@@ -38,6 +42,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             {
                 services.Remove(solarWatchDbContextOptions);
             }
+            
+            var coordinateDataProvider = services
+                .SingleOrDefault(d => d.ServiceType == typeof(ICoordinateDataProvider));
+            if (coordinateDataProvider != null)
+                services.Remove(coordinateDataProvider);
+            
+            services.AddSingleton<ICoordinateDataProvider>(_ => coordinateDataProviderMock.Object);
             
             //This line creates a new ServiceProvider by configuring an in-memory database provider for Entity
             //Framework. This is used for dependency injection during testing.

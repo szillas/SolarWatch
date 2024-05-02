@@ -5,8 +5,10 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using SolarWatch.Contracts;
 using SolarWatch.Data;
+using SolarWatch.Services.Providers.CoordinateProvider;
 using Xunit.Abstractions;
 
 namespace SolarWatch.IntegrationTests;
