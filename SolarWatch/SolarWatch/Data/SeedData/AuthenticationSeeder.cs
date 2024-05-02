@@ -48,7 +48,8 @@ public class AuthenticationSeeder
 
             if (adminCreated.Succeeded)
             {
-                await _userManager.AddToRoleAsync(admin, _configuration["RoleNames:Admin"]);
+                await _userManager.AddToRoleAsync(admin, "Admin");
+                //await _userManager.AddToRoleAsync(admin, _configuration["RoleNames:Admin"]);
             }
         }
     }
