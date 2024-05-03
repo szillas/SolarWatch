@@ -8,7 +8,6 @@ public class JsonProcessor : IJsonProcessor
   public Task<City> ProcessWeatherApiCityStringToCity(string data)
     {
         JsonDocument json = JsonDocument.Parse(data);
-
         if (json.RootElement.ValueKind == JsonValueKind.Array && json.RootElement.GetArrayLength() > 0)
         {
             JsonElement cityString = json.RootElement[0];
@@ -32,7 +31,7 @@ public class JsonProcessor : IJsonProcessor
             return Task.FromResult(city);
         }
 
-        throw new JsonException("Could not get coordinates. This city does not exist in the API.");
+        throw new JsonException($"Could not get coordinates. This city does not exist in the API.");
     }
     
     public SunriseSunsetOfCity ProcessSunriseSunsetApiStringToSunriseSunset(City city, DateTime date, string data)

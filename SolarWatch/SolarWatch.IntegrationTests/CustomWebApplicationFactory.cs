@@ -26,7 +26,6 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
 
     public Mock<ICoordinateDataProvider> CoordinateDataProviderMock { get; } = new();
-    public Mock<IJsonProcessor> JsonProcessorMock { get; } = new();
     public Mock<ISunriseSunsetProvider> SunriseSunsetProviderMock { get; } = new();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -52,18 +51,12 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             if (coordinateDataProvider != null)
                 services.Remove(coordinateDataProvider);
             
-            var jsonProcessor = services
-                .SingleOrDefault(d => d.ServiceType == typeof(IJsonProcessor));
-            if (jsonProcessor != null)
-                services.Remove(jsonProcessor);
-            
             var sunriseSunsetProvider = services
-                .SingleOrDefault(d => d.ServiceType == typeof(ICoordinateDataProvider));
+                .SingleOrDefault(d => d.ServiceType == typeof(ISunriseSunsetProvider));
             if (sunriseSunsetProvider != null)
                 services.Remove(sunriseSunsetProvider);
             
             services.AddSingleton<ICoordinateDataProvider>(_ => CoordinateDataProviderMock.Object);
-            services.AddSingleton<IJsonProcessor>(_ => JsonProcessorMock.Object);
             services.AddSingleton<ISunriseSunsetProvider>(_ => SunriseSunsetProviderMock.Object);
             
             //This line creates a new ServiceProvider by configuring an in-memory database provider for Entity
