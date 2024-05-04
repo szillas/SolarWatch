@@ -1,13 +1,9 @@
 ﻿using System.Globalization;
 using System.Net;
 using System.Text.Json;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SolarWatch.Data;
-using SolarWatch.Model;
-using SolarWatch.Services.JsonProcessor;
 using SolarWatch.Services.Providers.CoordinateProvider;
 using SolarWatch.Services.Providers.SunriseSunsetProvider;
 using Xunit.Abstractions;
@@ -15,7 +11,7 @@ using Xunit.Abstractions;
 namespace SolarWatch.IntegrationTests;
 
 [Collection("Integration Tests")]
-public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFactory>
+public class SunriseSunsetControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _httpClient;
     private readonly ITestOutputHelper _outputHelper;
@@ -23,7 +19,7 @@ public class SunriseSunsetControllerTest : IClassFixture<CustomWebApplicationFac
     private readonly Mock<ICoordinateDataProvider> _coordinateDataProviderMock;
     private readonly Mock<ISunriseSunsetProvider> _sunriseSunsesProviderMock;
     
-    public SunriseSunsetControllerTest(ITestOutputHelper outputHelper)
+    public SunriseSunsetControllerIntegrationTest(ITestOutputHelper outputHelper)
     {
         _factory = new CustomWebApplicationFactory();
         _coordinateDataProviderMock = _factory.CoordinateDataProviderMock;

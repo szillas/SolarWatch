@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -14,7 +13,7 @@ using SolarWatch.Services.Repository;
 namespace SolarWatchTest;
 
 [TestFixture]
-public class SunriseSunsetControllerTest
+public class SunriseSunsetControllerUnitTest
 {
     private Mock<ILogger<SunriseSunsetController>> _loggerMock;
     private Mock<ICoordinateDataProvider> _coordinateDataProviderMock;
@@ -61,7 +60,7 @@ public class SunriseSunsetControllerTest
         var result = await _controller.GetSunriseSunset("BP", null);
         
         //Assert
-        Assert.IsInstanceOf(typeof(NotFoundObjectResult), result.Result);
+        Assert.That(result.Result, Is.InstanceOf(typeof(NotFoundObjectResult)));
     }
     
     
@@ -80,7 +79,7 @@ public class SunriseSunsetControllerTest
         var result = await _controller.GetSunriseSunset(city, null);
         
         //Assert
-        Assert.IsInstanceOf(typeof(BadRequestObjectResult), result.Result);
+        Assert.That(result.Result, Is.InstanceOf(typeof(BadRequestObjectResult)));
     }
     
     [Test]
@@ -102,7 +101,7 @@ public class SunriseSunsetControllerTest
         var result = await _controller.GetSunriseSunset(city, null);
         
         //Assert
-        Assert.IsInstanceOf(typeof(BadRequestObjectResult), result.Result);
+        Assert.That(result.Result, Is.InstanceOf(typeof(BadRequestObjectResult)));
     }
     
     [Test]
@@ -128,7 +127,7 @@ public class SunriseSunsetControllerTest
         var result = await _controller.GetSunriseSunset(city, null);
         
         //Assert
-        Assert.IsInstanceOf(typeof(BadRequestObjectResult), result.Result);
+        Assert.That(result.Result, Is.InstanceOf(typeof(BadRequestObjectResult)));
     }
     
     
@@ -163,7 +162,7 @@ public class SunriseSunsetControllerTest
         var result = await _controller.GetSunriseSunset(city, null);
         
         //Assert
-        Assert.IsInstanceOf(typeof(OkObjectResult), result.Result);
+        Assert.That(result.Result, Is.InstanceOf(typeof(OkObjectResult)));
         Assert.That(((OkObjectResult)result.Result).Value, Is.EqualTo(expectedResult));
     }
     
@@ -195,7 +194,7 @@ public class SunriseSunsetControllerTest
         var okObjectResult = result.Result as OkObjectResult;
         
         //Assert
-        Assert.NotNull(okObjectResult);
+        Assert.That(okObjectResult, Is.Not.Null);
         Assert.That(okObjectResult?.Value, Is.EqualTo(expectedResult));
     }
     
@@ -221,7 +220,7 @@ public class SunriseSunsetControllerTest
         var okObjectResult = result.Result as OkObjectResult;
         
         //Assert
-        Assert.NotNull(okObjectResult);
+        Assert.That(okObjectResult, Is.Not.Null);
         Assert.That(okObjectResult?.Value, Is.EqualTo(sunriseSunsetOfCity));
     }
     
