@@ -16,7 +16,6 @@ using SolarWatch.Services.Providers.SunriseSunsetProvider;
 
 namespace SolarWatch.IntegrationTests;
 
-//Used to create instances of the web application for testing
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     public Mock<ICoordinateDataProvider> CoordinateDataProviderMock { get; } = new();
@@ -26,17 +25,15 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureTestServices(services =>
         {
-            //This line retrieves the DbContextOptions for the UsersContext from the collection of services. It checks
-            //if such a service is already registered.
-            var dbContext = services
+            var usersDbContext = services
                 .SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<UsersContext>));
-            if (dbContext != null)
-                services.Remove(dbContext);
+            if (usersDbContext != null)
+                services.Remove(usersDbContext);
             
-            var solarWatchDbContextOptions = services
+            var solarWatchDbContext = services
                 .SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<SolarWatchApiContext>));
-            if (solarWatchDbContextOptions != null)
-                services.Remove(solarWatchDbContextOptions);
+            if (solarWatchDbContext != null)
+                services.Remove(solarWatchDbContext);
             
             var coordinateDataProvider = services
                 .SingleOrDefault(d => d.ServiceType == typeof(ICoordinateDataProvider));
@@ -48,22 +45,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             if (sunriseSunsetProvider != null)
                 services.Remove(sunriseSunsetProvider);
             
-            services.AddSingleton<ICoordinateDataProvider>(_ => CoordinateDataProviderMock.Object);
+            services.AddSingleton<ICoordinateDataProvider>(_=> CoordinateDataProviderMock.Object);
             services.AddSingleton<ISunriseSunsetProvider>(_ => SunriseSunsetProviderMock.Object);
             
             //Remove comment from next line to use a Fake Policy evaluator!
             //services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
             
-            //This line creates a new ServiceProvider by configuring an in-memory database provider for Entity
-            //Framework. This is used for dependency injection during testing.
             var serviceProvider = new ServiceCollection().AddEntityFrameworkInMemoryDatabase().BuildServiceProvider();
 
-            //Here, the UsersContext is added to the services collection with AddDbContext. It configures the context
-            //to use an in-memory database named "InMemoryAuthTest" and specifies the internal service provider created earlier.
-            //This line creates a new instance of ServiceCollection, configures it to use the Entity Framework in-memory
-            //database provider , and then builds a ServiceProvider from it (BuildServiceProvider()).
-            //This ServiceProvider is typically used internally within the test setup for dependency injection purposes,
-            //such as providing a database context for testing.
             services.AddDbContext<UsersContext>(options =>
             {
                 options.UseInMemoryDatabase("InMemoryTest");
@@ -76,24 +65,17 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 options.UseInternalServiceProvider(serviceProvider);
             });
             
-            //The services collection is built into a ServiceProvider. This allows resolving services from the collection.
-            //This line builds a ServiceProvider from the existing ServiceCollection named services. This ServiceCollection
-            //was provided as an argument to the ConfigureServices method within the ConfigureWebHost method of the
-            //WebApplicationFactory. It is used by the ASP.NET Core application to configure services during startup.
             var sp = services.BuildServiceProvider();
-
-            //A scoped service provider is created to manage the scope of service lifetimes. Then, an instance of the
-            //UsersContext is retrieved from the scoped service provider.
+            
             using var scope = sp.CreateScope();
             using var usersContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
             usersContext.Database.EnsureCreated();
             
-            using var solarWatchDbContext = scope.ServiceProvider.GetRequiredService<SolarWatchApiContext>();
-            solarWatchDbContext.Database.EnsureCreated();
+            using var solarWatchContext = scope.ServiceProvider.GetRequiredService<SolarWatchApiContext>();
+            solarWatchContext.Database.EnsureCreated();
             
             SeedUsersContext(usersContext);
-            SeedSolarWatchApiContext(solarWatchDbContext);
-
+            SeedSolarWatchApiContext(solarWatchContext);
         });
     }
     
