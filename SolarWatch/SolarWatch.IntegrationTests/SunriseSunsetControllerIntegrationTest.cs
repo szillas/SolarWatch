@@ -1,8 +1,14 @@
-﻿using System.Globalization;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
+using SolarWatch.Contracts;
 using SolarWatch.Data;
 using SolarWatch.Services.Providers.CoordinateProvider;
 using SolarWatch.Services.Providers.SunriseSunsetProvider;
@@ -28,7 +34,6 @@ public class SunriseSunsetControllerIntegrationTest : IClassFixture<CustomWebApp
         _outputHelper = outputHelper;
     }
     
-    
     [Fact]
     public void SeededDataIsPresentInDatabase()
     {
@@ -47,13 +52,37 @@ public class SunriseSunsetControllerIntegrationTest : IClassFixture<CustomWebApp
         Assert.NotEmpty(cities); 
         Assert.NotEmpty(sunriseSunsetOfCities);
     }
+
+    private async Task<string> LoginAdmin()
+    {
+        var loginRequest = new AuthRequest("admin@admin.com", "admin123");
+        var loginJsonContent = JsonSerializer.Serialize(loginRequest);
+        var loginContent = new StringContent(loginJsonContent, Encoding.UTF8, "application/json");
+        var loginResponse = await _httpClient.PostAsync("/api/auth/Login", loginContent);
+        loginResponse.EnsureSuccessStatusCode(); 
+        
+        var loginResponseContent = await loginResponse.Content.ReadAsStringAsync();
+        
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+        var authResponse = JsonSerializer.Deserialize<AuthResponse>(loginResponseContent, options);
+
+        Assert.NotNull(authResponse);
+        return authResponse.Token;
+    }
     
     [Fact]
     public async Task GetSunriseSunsetReturnsNotFoundResultIfCityNotFoundInDbAndInExternalApi()
     {
         // Arrange
+        var authToken = await LoginAdmin();
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+        
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .Throws(new JsonException("Failed to get city from API"));
+        
         // Act
         var response = await _httpClient.GetAsync("/api/SunriseSunset/GetSunriseSunset?cityName=fgnfghjghjfgvhbnbfghvnhj");
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -70,7 +99,8 @@ public class SunriseSunsetControllerIntegrationTest : IClassFixture<CustomWebApp
         var city = "Budapest";
         var invalidDateTime = "invalidDateTime";
         
-        // Set up mock behavior
+        var authToken = await LoginAdmin();
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(city))
             .Throws(new FormatException("Time format is not valid."));
 
@@ -90,6 +120,8 @@ public class SunriseSunsetControllerIntegrationTest : IClassFixture<CustomWebApp
         // Arrange
         var city = "London";
         var datetime = "2024-05-01";
+        var authToken = await LoginAdmin();
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
         
         // Act
         var response = await _httpClient.GetAsync($"/api/Sunrisesunset/GetSunriseSunset?cityName={city}&date={datetime}");
@@ -109,7 +141,8 @@ public class SunriseSunsetControllerIntegrationTest : IClassFixture<CustomWebApp
         // Arrange
         var city = "D";
         var datetime = DateTime.Today.ToString("yyyy-MM-dd");
-        _outputHelper.WriteLine(datetime);
+        var authToken = await LoginAdmin();
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
         
         _coordinateDataProviderMock.Setup(x => x.GetCityFromOpenWeatherMap(It.IsAny<string>()))
             .ReturnsAsync("[{\"name\":\"TestCity\",\"lat\":0.568,\"lon\":-12.698,\"country\":\"DE\",\"state\":\"G\"}]");
@@ -128,9 +161,6 @@ public class SunriseSunsetControllerIntegrationTest : IClassFixture<CustomWebApp
         Assert.Contains("TestCity", responseContent);
         Assert.Contains("sunset", responseContent);
     }
-    
 
-    
-    
     
 }

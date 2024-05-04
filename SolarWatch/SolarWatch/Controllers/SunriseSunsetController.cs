@@ -35,6 +35,7 @@ public class SunriseSunsetController : ControllerBase
         _sunriseSunsetRepository = sunriseSunsetRepository;
     }
     
+    [Authorize]
     [HttpGet("GetSunriseSunset")]
     public async Task<ActionResult<SunriseSunsetOfCity>> GetSunriseSunset(string cityName, string? date)
     {

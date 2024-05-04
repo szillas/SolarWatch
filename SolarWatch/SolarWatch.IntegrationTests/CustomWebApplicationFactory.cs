@@ -1,21 +1,16 @@
-﻿using System.Data.Common;
-using System.Globalization;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using SolarWatch.Contracts;
 using SolarWatch.Data;
-using SolarWatch.Data.SeedData;
 using SolarWatch.Model;
-using SolarWatch.Services.JsonProcessor;
 using SolarWatch.Services.Providers.CoordinateProvider;
 using SolarWatch.Services.Providers.SunriseSunsetProvider;
 
@@ -24,7 +19,6 @@ namespace SolarWatch.IntegrationTests;
 //Used to create instances of the web application for testing
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
-
     public Mock<ICoordinateDataProvider> CoordinateDataProviderMock { get; } = new();
     public Mock<ISunriseSunsetProvider> SunriseSunsetProviderMock { get; } = new();
 
@@ -42,9 +36,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             var solarWatchDbContextOptions = services
                 .SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<SolarWatchApiContext>));
             if (solarWatchDbContextOptions != null)
-            {
                 services.Remove(solarWatchDbContextOptions);
-            }
             
             var coordinateDataProvider = services
                 .SingleOrDefault(d => d.ServiceType == typeof(ICoordinateDataProvider));
@@ -58,6 +50,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             
             services.AddSingleton<ICoordinateDataProvider>(_ => CoordinateDataProviderMock.Object);
             services.AddSingleton<ISunriseSunsetProvider>(_ => SunriseSunsetProviderMock.Object);
+            
+            //Remove comment from next line to use a Fake Policy evaluator!
+            //services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
             
             //This line creates a new ServiceProvider by configuring an in-memory database provider for Entity
             //Framework. This is used for dependency injection during testing.
@@ -96,28 +91,11 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             using var solarWatchDbContext = scope.ServiceProvider.GetRequiredService<SolarWatchApiContext>();
             solarWatchDbContext.Database.EnsureCreated();
             
-            //SeedUsersContext(usersContext);
-            
-            City initCity = new City
-            {
-                Name = "London", Latitude = 51.5074, Longitude = 0.1278, Country = "UK"
-            };
-            solarWatchDbContext.Cities.Add(initCity);
-            solarWatchDbContext.SaveChanges();
-            var datetime = DateTime.ParseExact("2024-05-01", "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            SeedUsersContext(usersContext);
+            SeedSolarWatchApiContext(solarWatchDbContext);
 
-            solarWatchDbContext.SunriseSunsetOfCities.Add(new SunriseSunsetOfCity
-            {
-                City = initCity,
-                Date = datetime,
-                Sunrise = "00:00:00",
-                Sunset = "20:00:00",
-                TimeZone = "UTC"
-            });
-            solarWatchDbContext.SaveChanges();
         });
     }
-    
     
     private void SeedUsersContext(UsersContext context)
     {
@@ -162,95 +140,26 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             }
         }
     }
-    
-    
-    
-}
 
-
-
-/*
- builder.ConfigureTestServices(services =>
+    private void SeedSolarWatchApiContext(SolarWatchApiContext solarWatchDbContext)
     {
-        var dbContextDescriptor =
-            services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<UsersContext>));
-        services.Remove(dbContextDescriptor);
-        var dbConnectionDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbConnection));
-        services.Remove(dbConnectionDescriptor);
-
-        services.AddSingleton<DbConnection>(container =>
+        City initCity = new City
         {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
+            Name = "London", Latitude = 51.5074, Longitude = 0.1278, Country = "UK"
+        };
+        solarWatchDbContext.Cities.Add(initCity);
+        solarWatchDbContext.SaveChanges();
+        
+        var datetime = DateTime.ParseExact("2024-05-01", "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            return connection;
+        solarWatchDbContext.SunriseSunsetOfCities.Add(new SunriseSunsetOfCity
+        {
+            City = initCity,
+            Date = datetime,
+            Sunrise = "00:00:00",
+            Sunset = "20:00:00",
+            TimeZone = "UTC"
         });
-
-        services.AddDbContext<UsersContext>((container, options) =>
-        {
-            var connection = container.GetRequiredService<DbConnection>();
-            options.UseSqlite(connection);
-        });
-
-        // Seed authentication data
-        SeedAuthenticationData(services.BuildServiceProvider());
-    });
- */
-   /* private static void SeedAuthenticationData(IServiceProvider serviceProvider)
-    {
-        using var scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
-        var context = scopedServices.GetRequiredService<UsersContext>();
-
-        try
-        {
-            // Ensure the database is created and migrated
-            context.Database.EnsureCreated();
-
-            // Run the authentication seeder
-            var seeder = new AuthenticationSeeder(
-                scopedServices.GetRequiredService<RoleManager<IdentityRole>>(),
-                scopedServices.GetRequiredService<UserManager<IdentityUser>>(),
-                scopedServices.GetRequiredService<IConfiguration>()
-            );
-            seeder.AddRoles(); // Seed roles
-            seeder.AddAdmin(); // Seed admin user
-        }
-        catch (Exception ex)
-        {
-            // Log any exceptions if needed
-            // Handle exceptions as appropriate
-            Console.WriteLine($"An error occurred while seeding the authentication data: {ex.Message}");
-        }
+        solarWatchDbContext.SaveChanges();
     }
-}*/
-
-
-/*builder.UseEnvironment("Test");
-        builder.ConfigureServices(services =>
-        {
-            var context = services.SingleOrDefault(descriptor => descriptor.ServiceType == typeof(DbContextOptions<UsersContext>));
-            /*if (context != null)
-            {
-                services.Remove(context);
-                var options = services
-                    .Where(r => r.ServiceType == typeof(DbContextOptions) ||
-                                r.ServiceType.IsGenericType && r.ServiceType.GetGenericTypeDefinition() ==
-                                typeof(DbContextOptions<>)).ToArray();
-                foreach (var option in options)
-                {
-                    services.Remove(option);
-                }
-            }
-if (context != null)
-{
-    services.Remove(context);
-}    
-            
-// Add a new registration for ApplicationDbContext with an in-memory database
-services.AddDbContext<UsersContext>(options =>
-{
-    // Provide a unique name for your in-memory database
-    options.UseInMemoryDatabase("InMemoryDatabaseForTest");
-});
-});*/
+}

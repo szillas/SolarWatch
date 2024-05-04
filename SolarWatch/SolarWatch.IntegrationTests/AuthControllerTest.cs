@@ -120,8 +120,7 @@ public class AuthControllerTest : IClassFixture<CustomWebApplicationFactory>
         // Assert
         loginResponse.EnsureSuccessStatusCode(); // Status Code 200-299
         Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
-
-
+        
         var responseContent = await loginResponse.Content.ReadAsStringAsync();
 
         var options = new JsonSerializerOptions
