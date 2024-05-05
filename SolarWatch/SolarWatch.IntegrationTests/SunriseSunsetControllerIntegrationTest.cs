@@ -55,7 +55,7 @@ public class SunriseSunsetControllerIntegrationTest : IClassFixture<CustomWebApp
 
     private async Task<string> LoginAdmin()
     {
-        var loginRequest = new AuthRequest("admin@admin.com", "admin123");
+        var loginRequest = new AuthRequest("admin@admin.com", "Pass1234");
         var loginJsonContent = JsonSerializer.Serialize(loginRequest);
         var loginContent = new StringContent(loginJsonContent, Encoding.UTF8, "application/json");
         var loginResponse = await _httpClient.PostAsync("/api/auth/Login", loginContent);
