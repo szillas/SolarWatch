@@ -26,11 +26,6 @@ AddIdentity();
 
 var app = builder.Build();
 
-using var scope = app.Services.CreateScope();
-var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
-authenticationSeeder.AddRoles();
-authenticationSeeder.AddAdmin();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -61,7 +56,7 @@ void AddServices()
     builder.Services.AddScoped<ISunriseSunsetRepository, SunriseSunsetRepository>();
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<ITokenService, TokenService>();
-    builder.Services.AddScoped<AuthenticationSeeder>();
+    //builder.Services.AddScoped<AuthenticationSeeder>();
 }
 
 void ConfigureSwagger()
@@ -142,3 +137,20 @@ void AddIdentity()
 }
 
 public partial class Program { }
+
+
+/*
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
+        authenticationSeeder.AddRoles();
+        authenticationSeeder.AddAdmin();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("An error occurred while trying to seed Users.");
+        Console.WriteLine(ex.Message);
+    }
+    */

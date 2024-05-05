@@ -19,12 +19,18 @@ public class AuthenticationSeeder
     {
         var adminRoleName = _configuration["RoleNames:Admin"];
         var userRoleName = _configuration["RoleNames:User"];
-        
-        var tAdmin = CreateRole(_roleManager, adminRoleName);
-        tAdmin.Wait();
 
-        var tUser = CreateRole(_roleManager, userRoleName);
-        tUser.Wait();
+        if (adminRoleName != null)
+        {
+            var tAdmin = CreateRole(_roleManager, adminRoleName);
+            tAdmin.Wait();
+        }
+
+        if (userRoleName != null)
+        {
+            var tUser = CreateRole(_roleManager, userRoleName);
+            tUser.Wait();
+        }
     }
 
     private async Task CreateRole(RoleManager<IdentityRole> roleManager, string roleName)
