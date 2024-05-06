@@ -4,7 +4,12 @@ import FormTextInput from "../FormComponents/FormTextInput"
 import FormDateInput from "../FormComponents/FormDateInput"
 import SunriseSunsetResultComp from "../SunriseSunsetResult/SunriseSunsetResultComp"
 
+import { AuthContext } from "../../Pages/Layout/Layout"
+import { useContext } from "react";
+
 export default function GetSunriseSunset(){
+
+    const {user} = useContext(AuthContext)|| {};
 
     const[sunriseSunset, SetSunriseSunset] = useState({
         cityName: "", date: "2024-04-29"
@@ -37,9 +42,18 @@ export default function GetSunriseSunset(){
     
         console.log(sunriseSunset);
         console.log(`/api/SunriseSunset/GetSunriseSunset?cityName=${sunriseSunset.cityName}&date=${sunriseSunset.date}`)
+        console.log(user);
 
         try {
-            const response = await fetch(`/api/SunriseSunset/GetSunriseSunset?cityName=${sunriseSunset.cityName}&date=${sunriseSunset.date}`);
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}` // Include the JWT token in the Authorization header
+                }
+            };
+
+            const response = await fetch(`/api/SunriseSunset/GetSunriseSunset?cityName=${sunriseSunset.cityName}&date=${sunriseSunset.date}`, requestOptions);
             if (!response.ok) {
                 throw new Error("Error fetching data from server.")
             }
@@ -55,7 +69,6 @@ export default function GetSunriseSunset(){
                 ...sunriseSunsetResult, city: "", country: "", date: "", sunrise: "", sunset: "", timeZone:""
             })
         }
-        
     }
 
     return(
