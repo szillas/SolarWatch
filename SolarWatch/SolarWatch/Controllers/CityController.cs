@@ -8,10 +8,10 @@ namespace SolarWatch.Controllers;
 [Route("[controller]")]
 public class CityController : ControllerBase
 {
-    private readonly ILogger<SunriseSunsetController> _logger;
+    private readonly ILogger<CityController> _logger;
     private readonly ICityRepository _cityRepository;
 
-    public CityController(ILogger<SunriseSunsetController> logger, ICityRepository cityRepository)
+    public CityController(ILogger<CityController> logger, ICityRepository cityRepository)
     {
         _logger = logger;
         _cityRepository = cityRepository;
