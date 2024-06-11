@@ -46,6 +46,7 @@ SolarWatch is a full-stack web application project that provides sunrise and sun
 ### Built With
 
 * [![React][React.js]][React-url]
+* [![dotnet][dotnet.com]][dotnet-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -69,6 +70,8 @@ SolarWatch is a full-stack web application project that provides sunrise and sun
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
+[dotnet.com]: https://img.shields.io/badge/dotnet-512BD4?style=for-the-badge&logo=dotnet&logoColor=%23512BD4
+[dotnet-url]: https://dotnet.microsoft.com/en-us/apps/aspnet
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
 [Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
