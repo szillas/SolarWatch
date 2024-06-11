@@ -1,12 +1,14 @@
 # SolarWatch
 SolarWatch is a full-stack web application project that provides sunrise and sunset times for a given city on a given date in UTC Time. The project is not yet finished. The backend is an ASP.NET Web API that is connected to a Microsoft SQL database. The frontend uses React with the help of CSS styling.
 
+<a name="readme-top"></a>
+
 <!-- Header -->
-<div align="center">
+<div style="text-align: center;">
 
-<h3 align="center">SolarWatch</h3>
+<h3 style="text-align: center;">SolarWatch</h3>
 
-  <p align="center">
+  <p style="text-align: center;">
     SolarWatch is a full-stack web application project that provides sunrise and sunset times for a given city on a given date in UTC Time.
     <br />
   </p>
@@ -41,18 +43,31 @@ SolarWatch is a full-stack web application project that provides sunrise and sun
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p style="text-align: right;">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
 * [![React][React.js]][React-url]
 * [![dotnet][dotnet.com]][dotnet-url]
+* [![css][css.org]][css-url]
+* [![MSSQL][mssql.com]][mssql-url]
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p style="text-align: right;">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[dotnet.com]: https://img.shields.io/badge/ASP.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=23512BD4
+[dotnet-url]: https://dotnet.microsoft.com/en-us/apps/aspnet
+[css.org]: https://img.shields.io/badge/css3-black?style=for-the-badge&logo=css3&logoColor=1572B6
+[css-url]: https://developer.mozilla.org/en-US/docs/Web/CSS
+[mssql.com]: https://img.shields.io/badge/Microsoft%20SQL%20Server-blue?style=for-the-badge&logoColor=23512BD4
+[mssql-url]: https://www.microsoft.com/en-us/sql-server
+
+
 [contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
 [contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
@@ -68,10 +83,6 @@ SolarWatch is a full-stack web application project that provides sunrise and sun
 [product-screenshot]: images/screenshot.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[dotnet.com]: https://img.shields.io/badge/dotnet-512BD4?style=for-the-badge&logo=dotnet&logoColor=%23512BD4
-[dotnet-url]: https://dotnet.microsoft.com/en-us/apps/aspnet
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
 [Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
