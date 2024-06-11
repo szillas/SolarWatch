@@ -7,7 +7,7 @@
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_USER=sa
-      - SA_PASSWORD=${SQLSERVER_PASSWORD}
+      - MSSQL_SA_PASSWORD=${SQLSERVER_PASSWORD}
   
   backend:
     image: solarwatch-backend

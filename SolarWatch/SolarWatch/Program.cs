@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SolarWatch.Data;
-using SolarWatch.Data.SeedData;
 using SolarWatch.Services.Authentication;
 using SolarWatch.Services.JsonProcessor;
 using SolarWatch.Services.Providers.CoordinateProvider;
@@ -27,6 +26,8 @@ AddAuthentication();
 AddIdentity();
 
 var app = builder.Build();
+
+ApplyMigrations();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -137,6 +138,53 @@ void AddIdentity()
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<UsersContext>();
 }
+
+async void ApplyMigrations()
+{
+    var isTestEnvironment = Environment.GetEnvironmentVariable("IS_TEST_ENVIRONMENT");
+
+    if (string.IsNullOrEmpty(isTestEnvironment) || !bool.TryParse(isTestEnvironment, out var isTest) || !isTest)
+    {
+        using var scope = app.Services.CreateScope();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+        const int maxRetries = 6;
+        int retries = 0;
+        bool dbReady = false;
+
+        while (!dbReady && retries < maxRetries)
+        {
+            try
+            {
+                var usersContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
+                var solarWatchApiContext = scope.ServiceProvider.GetRequiredService<SolarWatchApiContext>();
+
+                await usersContext.Database.CanConnectAsync();
+                await solarWatchApiContext.Database.CanConnectAsync();
+
+                usersContext.Database.Migrate();
+                solarWatchApiContext.Database.Migrate();
+
+                dbReady = true;
+                logger.LogInformation("Migrations applied successfully.");
+            }
+            catch (Exception ex)
+            {
+                retries++;
+                logger.LogWarning(ex,
+                    "Database not ready. Waiting before retrying... Attempt {Attempt} of {MaxRetries}", retries,
+                    maxRetries);
+                await Task.Delay(TimeSpan.FromSeconds(Math.Pow(2, retries))); // Exponential backoff
+            }
+        }
+
+        if (!dbReady)
+        {
+            logger.LogError("Failed to apply migrations after {MaxRetries} attempts.", maxRetries);
+        }
+    }
+}
+
 
 public partial class Program { }
 

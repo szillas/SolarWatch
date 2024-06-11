@@ -25,6 +25,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureTestServices(services =>
         {
+            Environment.SetEnvironmentVariable("IS_TEST_ENVIRONMENT", "true");
+            
             var usersDbContext = services
                 .SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<UsersContext>));
             if (usersDbContext != null)
