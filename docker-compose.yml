@@ -1,0 +1,36 @@
+﻿services:
+  
+  solarwatchDb:
+    image: mcr.microsoft.com/mssql/server:latest
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_USER=sa
+      - SA_PASSWORD=${SQLSERVER_PASSWORD}
+  
+  backend:
+    image: solarwatch-backend
+    ports:
+      - 8080:8080
+    build:
+      context: ./SolarWatch/SolarWatch
+      dockerfile: Dockerfile
+    depends_on:
+      - solarwatchDb
+    env_file:
+      - .env
+    environment:
+      CONNECTIONSTRINGS__SQLSERVERDEFAULT: Server=solarwatchDb;Database=WeatherApi;User Id=sa;Password=${SQLSERVER_PASSWORD};TrustServerCertificate=true;Encrypt=False;
+      SOLARWATCH__OPENWEATHERMAPKEY: ${SOLARWATCH__OPENWEATHERMAPKEY}
+      SOLARWATCH__SECRETKEY: ${SOLARWATCH__SECRETKEY}
+  
+  frontend:
+    image: solarwatch-frontend:v1.0
+    build:
+      context: ./SolarWatch-Frontend
+      dockerfile: Dockerfile
+    ports:
+      - 8081:5173
+    environment:
+      - VITE_BACKEND_URL=http://backend:8080/
