@@ -65,12 +65,13 @@ This section helps to set up the project locally and gives instructions about ho
 The project uses OpenWeather's API. The API proides 1000 API calls for free, but for every call we need an API key. 
 Get a free API key at https://openweathermap.org/ by registering.
 
-### Setup and run with Docker
+#### Setup and run with Docker
 
 1. Clone the repo
    ```sh
    git clone https://github.com/szillas/SolarWatch.git
    ```
+
 2. Inside the main folder there is a sample.env file. Rename it to just .env .
    ```sh
    smple.env  ->  .env
@@ -89,9 +90,14 @@ to use your own password and secretkey, that should be strong as the default val
 6. The building process and starting the database needs some time, but after the container runs, and the mssql server starts, you can reach the frontend on http://localhost:8082/
 
 
-#### Prerequisites
+#### Setup and run without Docker
 
+1. Clone the repo
+   ```sh
+   git clone https://github.com/szillas/SolarWatch.git
+   ```
 
+2. 
 
 
 
