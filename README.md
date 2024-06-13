@@ -55,6 +55,64 @@ SolarWatch is a full-stack web application project that provides sunrise and sun
 <p style="text-align: right;">(<a href="#readme-top">back to top</a>)</p>
 
 
+<!-- GETTING STARTED -->
+## Getting Started
+
+This section helps to set up the project locally and gives instructions about how to run it.
+
+### Prerequisites  
+
+The project uses OpenWeather's API. The API proides 1000 API calls for free, but for every call we need an API key. 
+Get a free API key at https://openweathermap.org/ by registering.
+
+### Setup and run with Docker
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/szillas/SolarWatch.git
+   ```
+2. Inside the main folder there is a sample.env file. Rename it to just .env .
+   ```sh
+   smple.env  ->  .env
+   ```  
+
+3. Inside the .env file, there is an SQLSERVER_PASSWORD and a SOLARWATCH__SECRETKEY environment variable. The program can run with these default values, but I would advise
+to use your own password and secretkey, that should be strong as the default values show.  
+
+4. Inside the .env file, there is one more environment variable, called SOLARWATCH__OPENWEATHERMAPKEY. Change it to your own API key from [OpenWeather.](https://openweathermap.org/)  
+
+5. Build and run the app with docker-compose. Start the application from the project directory:
+   ```sh
+   docker compose up
+   ```  
+   
+6. The building process and starting the database needs some time, but after the container runs, and the mssql server starts, you can reach the frontend on http://localhost:5173/
+
+
+#### Prerequisites
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
