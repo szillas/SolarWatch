@@ -14,9 +14,12 @@ using SolarWatch.Services.Repository;
 var builder = WebApplication.CreateBuilder(args);
 
 var issuerKey = builder.Configuration["SolarWatch:SecretKey"];
-var sqlServerConnectionStringWithoutPass = builder.Configuration.GetConnectionString("SqlServerDefault");
+var sqlServerConnectionString = builder.Configuration.GetConnectionString("SqlServerDefault");
 var sqlServerPassword = builder.Configuration["SqlServerDefaultPassword"];
-var sqlServerConnectionString = $"{sqlServerConnectionStringWithoutPass};Password={sqlServerPassword};";
+if (sqlServerPassword is not null)
+{
+    sqlServerConnectionString += $";Password={sqlServerPassword};";
+}
 
 // Add services to the container.
 AddServices();
