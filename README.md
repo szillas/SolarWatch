@@ -85,8 +85,8 @@ to use your own password and secretkey, that should be strong as the default val
    ```sh
    docker compose up
    ```  
-   
-6. The building process and starting the database needs some time, but after the container runs, and the mssql server starts, you can reach the frontend on http://localhost:5173/
+
+6. The building process and starting the database needs some time, but after the container runs, and the mssql server starts, you can reach the frontend on http://localhost:8082/
 
 
 #### Prerequisites
