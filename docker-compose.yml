@@ -6,7 +6,6 @@
       - 1433:1433
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_USER=sa
       - MSSQL_SA_PASSWORD=${SQLSERVER_PASSWORD}
   
   backend:
@@ -31,6 +30,6 @@
       context: ./SolarWatch-Frontend
       dockerfile: Dockerfile
     ports:
-      - 8081:5173
+      - 8082:5173
     environment:
       - VITE_BACKEND_URL=http://backend:8080/
