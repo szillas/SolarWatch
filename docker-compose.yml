@@ -2,16 +2,12 @@
   
   solarwatchDb:
     image: mcr.microsoft.com/mssql/server:latest
-    ports:
-      - 1433:1433
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=${SQLSERVER_PASSWORD}
   
   backend:
     image: solarwatch-backend
-    ports:
-      - 8080:8080
     build:
       context: ./SolarWatch/SolarWatch
       dockerfile: Dockerfile
