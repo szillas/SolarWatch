@@ -73,7 +73,7 @@ Get a free API key at https://openweathermap.org/ by registering.
    ```
 
 2. Inside the main folder there is a sample.env file. Rename it to just .env .
-   ```sh
+   ```
    smple.env  ->  .env
    ```  
 
@@ -92,13 +92,57 @@ to use your own password and secretkey, that should be strong as the default val
 
 ### Setup and run without Docker
 
+#### Prerequisites  
+
+1. The project uses an SQL Server database.  
+
+2. Backend uses .NET SDK 7. It needs to be installed on your machine. You can download it from here: https://dotnet.microsoft.com/en-us/download/dotnet/7.0  
+
+3. Frontend needs Node.js to be installed on your computer. You can download it from: https://nodejs.org/
+
+
+#### Setup and run
+
 1. Clone the repo
    ```sh
    git clone https://github.com/szillas/SolarWatch.git
-   ```
-  
-  
-  
+   ```  
+
+2. Restore NuGet packages. Navigate to the project directory (SolarWatch/SolarWatch/SolarWatch) and run:
+   ```sh
+   dotnet restore
+   ```  
+
+3. Start your MSSQL Server. Change ConnectionStrings:SqlServerDefault string to your connection string inside appsettings.json. You can also include this
+parameter inside secrets.json, or you can add it as an evironment variable. (These 2 have precedence over appsettings.json.)
+   ``` 
+    "ConnectionStrings": {
+      "SqlServerDefault": "Server=localhost,1433;Database=WeatherApi;User Id=sa;TrustServerCertificate=true;Password=yourStrong(!)Password2;"
+    },
+   ```  
+
+4. Backend uses http://localhost:5098 by default. If you need to, you can change this setting inside the launchsettings.json file. If the settings are ready, run backend:
+    ```sh
+   dotnet run
+    ```  
+
+5. Now that the database and the backend runs, frontend can be started. First install dependencies. Navigate to the project directory (SolarWatch/SolarWatch-Fronted) and run the following command:
+    ```sh
+   npm install
+    ```  
+
+6. If you changed the backend url earlier, you need to change it here as well. Inside the vite.config.js file, modify the localhost port to your own:
+    ```
+    target: process.env.VITE_BACKEND_URL || "http://localhost:5098/",
+    ```  
+
+7. Start frontend dev server
+    ```sh
+    npm run dev
+    ```  
+
+
+
 ----------------------------------------------------------------
 ### Readme is under construction!
 ----------------------------------------------------------------
