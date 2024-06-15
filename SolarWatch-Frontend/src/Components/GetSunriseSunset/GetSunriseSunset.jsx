@@ -7,6 +7,8 @@ import SunriseSunsetResultComp from "../SunriseSunsetResult/SunriseSunsetResultC
 import { AuthContext } from "../../Pages/Layout/Layout"
 import { useContext } from "react";
 
+import './styles.css';
+
 export default function GetSunriseSunset(){
 
     const {user} = useContext(AuthContext)|| {};
@@ -87,7 +89,6 @@ export default function GetSunriseSunset(){
                 </form>
            </div>
 
-            <h1>Result</h1>
             {sunriseSunsetResult.city.length !== 0 && <SunriseSunsetResultComp sunriseData={sunriseSunsetResult}/>}
         </div>
 
