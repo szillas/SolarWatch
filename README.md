@@ -169,6 +169,11 @@ User have to provide a City (which is not necessary a big city, it can be a litt
 and when it sets. Date defaults to today's date. Sunrise and sunset time is given in UTC timezone. In the future it will be changed so that the results are
 shown in the city's own timezone.
 
+<p style="text-align: center;">
+  <img src="image-1.png" alt="drawing" width="300"/>
+</p>
+
+
 <p style="text-align: right;">(<a href="#readme-top">back to top</a>)</p>
 
 

@@ -77,7 +77,7 @@ export default function GetSunriseSunset(){
         <div>
            <br></br>
            <div className="sunrise-sunset-outer">
-            <h2>Form</h2>
+            <h2>Sunrise/Sunset form</h2>
                 <form className="GetSunriseSunet" onSubmit={onSubmit}>
                     <FormTextInput inputNameAndId={"city"} label={"City"} setForm={setForm}/>
                     <FormDateInput inputNameAndId={"date"} label={"Date"} setForm={setForm}/>
