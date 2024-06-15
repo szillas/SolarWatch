@@ -18,7 +18,7 @@ export default function MainNav() {
                 </div>
                 {user &&<ul className="menu">
                     <li>
-                        <Link to="/solar-watch" id="nav-ads">Ads</Link>
+                        <Link to="/solar-watch" id="nav-solar">SolarWatch</Link>
                     </li>
                 </ul>}
                 {user === null && <div className="menu">

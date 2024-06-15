@@ -37,7 +37,7 @@ header .logout {
     color: #ff0000;
 }
 
-#nav-ads {
+#nav-solar {
     font-weight: bold;
     text-decoration: none;
     color: #000000;
@@ -58,7 +58,7 @@ header .menu {
     color: #ff0000;
 }
 
-#nav-ads:hover{
+#nav-solar:hover{
     color: #ff0000;
 }
 
