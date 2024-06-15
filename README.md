@@ -162,9 +162,12 @@ parameter inside secrets.json, or you can add it as an evironment variable. (The
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-In its current state, the application can be used to show sunrise and sunset times for a given city/place on a given date. The feature is only available through
-registration. 
+In its current state, the application can be used to show sunrise and sunset times for a given city/place on a given date. The feature is only available
+for registered users. 
 
+User have to provide a City (which is not necessary a big city, it can be a little village as well ) and a Date for which they want to see when the sun rises 
+and when it sets. Date defaults to today's date. Sunrise and sunset time is given in UTC timezone. In the future it will be changed so that the results are
+shown in the city's own timezone.
 
 <p style="text-align: right;">(<a href="#readme-top">back to top</a>)</p>
 
