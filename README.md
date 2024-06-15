@@ -1,12 +1,11 @@
-# SolarWatch
-SolarWatch is a full-stack web application project that provides sunrise and sunset times for a given city on a given date in UTC Time. The project is not yet finished. The backend is an ASP.NET Web API that is connected to a Microsoft SQL database. The frontend uses React with the help of CSS styling.
+
 
 <a name="readme-top"></a>
 
 <!-- Header -->
 <div style="text-align: center;">
 
-<h3 style="text-align: center;">SolarWatch</h3>
+<h1 style="text-align: center;">SolarWatch</h1>
 
   <p style="text-align: center;">
     SolarWatch is a full-stack web application project that provides sunrise and sunset times for a given city on a given date in UTC Time.
@@ -42,6 +41,23 @@ SolarWatch is a full-stack web application project that provides sunrise and sun
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+
+SolarWatch is a full-stack web application project that provides sunrise and sunset times for a given city/place on a given date in UTC Time.
+The backend is an ASP.NET Web API that is connected to a Microsoft SQL database. The frontend uses React with the help of CSS styling.  
+
+To work with the SQL Server, backend uses Entity Framework Core, which is an ORM (Object-Relational Mapping) framework for .NET. With the help of it, 
+interaction with the database can be done using object-oriented programming concepts, instead of writing SQL statements.  
+
+The application's features are only accessible through registration. Authentication is done via JWT tokens and while using ASP.NET Core's Identity.  
+
+For getting sunrise/sunset information, the application works with 2 external APIs: 
+- Coordinates are received from https://openweathermap.org/api .
+- Sunrise/sunset information for a given coordinate is received from https://sunrise-sunset.org/ .
+
+Whenever the sunrise/sunset feature is used, the received information is stored inside the database. Therefore, calling the backend with the same values for the 2nd time,
+the information will be supplied from the SQL Server not by the external APIs.
+
+Authorization is also implemented. With user (and admin) role, sunrise/sunset information can be retrieved. This feature is under development but in the future, with admin role, admins can do CRUD (Create-Read-Update-Delete) operations on the City and Sunrise/Sunset entities inside the database.
 
 <p style="text-align: right;">(<a href="#readme-top">back to top</a>)</p>
 
@@ -140,6 +156,18 @@ parameter inside secrets.json, or you can add it as an evironment variable. (The
     ```sh
     npm run dev
     ```  
+
+<p style="text-align: right;">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- USAGE EXAMPLES -->
+## Usage
+
+In its current state, the application can be used to show sunrise and sunset times for a given city/place on a given date. The feature is only available through
+registration. 
+
+
+<p style="text-align: right;">(<a href="#readme-top">back to top</a>)</p>
+
 
 
 
