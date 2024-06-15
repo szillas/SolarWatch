@@ -62,3 +62,47 @@
 .submit-button:hover {
     background-color: #0056b3;
 }
+
+
+.results-outer {
+    min-width: 500px;
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.results-outer h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.result-item {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+    justify-content: space-between; 
+    align-items: center;
+    text-align: center; 
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-label {
+    font-weight: bold;
+    color: #555;
+    text-align: left; 
+    flex: 1;
+}
+
+.result-value {
+    color: #333;
+    font-weight: bold;
+    flex: 2; /* Allow more space for values, center them */
+    text-align: center;
+}
