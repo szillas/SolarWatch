@@ -4,19 +4,29 @@ export default Registration;
 export async function action({request}){
     const formData = await request.formData();
     const registrationData = Object.fromEntries(formData);
-    console.log(registrationData);
-    return await register(registrationData);
+
+    try{
+        const response = await register(registrationData);
+
+        if(response.ok){
+            return {success: true};
+        } else {
+            const data = await response.json();
+            return { error: data.message || "Registration failed, please try again!" };
+        }
+    } catch (error){
+        return { error:  "An unexpected error occurred. Please try again later." };
+    }
 }
 
 async function register(registrationData){
-    let res = await fetch("/api/Auth/Register", {
+    const res = await fetch("/api/Auth/Register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(registrationData),
     });
-    let data = await res.json();
-    console.log(data);
-    return data;
+
+    return res;
 }
