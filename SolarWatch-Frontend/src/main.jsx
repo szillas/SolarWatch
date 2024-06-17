@@ -25,23 +25,9 @@ const router = createBrowserRouter(
                   path: "/solar-watch",
                   element: <SolarWatch/>
               },
-              {/*
-                  path: "/ads/:id",
-                  element: <AdvertisementDetail/>,
-                  loader: ({params}) => adLoader(params.id)
-              },
               {
-                  path: "/carousel",
-                  element: <AdvertisementCarousel/>
-              }
-              ,{
-                  path: "/users/:name",
-                  element: <Profile/>,
-                  loader: ({params}) => profileLoader(params.name)
-              */} ,
-              {
-                path: "/login",
-                element: <Login />
+                    path: "/login",
+                    element: <Login />
               },
               {
                   path: "/registration",
