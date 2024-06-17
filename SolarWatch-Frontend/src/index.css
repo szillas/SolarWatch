@@ -3,6 +3,7 @@
 body{
     margin:0;
     font-family: Poppins;
+    background-color: rgb(230, 242, 250);
 }
 
 #root{

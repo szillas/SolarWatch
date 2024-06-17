@@ -15,13 +15,17 @@ export default function Home(){
 
     return (
         <>
-                {user &&  (
-                    <div>
-                        <p>Check out Solar Watch!</p>
-                        <button onClick={navigateToSolarWatch}>Solar Watch</button>
+            {user &&  (
+                <>
+                    <div className="image-container">
+                        <div className="image-box">
+                            <div className="image-title">Sunrise / Sunset Times</div>
+                            <img src="/images/sunset.jpg" alt="Image 1" onClick={navigateToSolarWatch} />
+                        </div>
                     </div>
-                )}
-                {!user && <div>Please Login to use the application!</div>}
+                </>
+            )}
+            {!user && <div className="login-message">Please Login to use the application!</div>}
         </> 
     )
 }
