@@ -1,16 +1,9 @@
 import { useState, useEffect } from "react"
 import './styles.css'
 
-export default function FormDateInput({ inputNameAndId, label, setForm}){
+export default function FormDateInput({ inputNameAndId, label, setForm, today}){
 
-    const[state, setState] = useState('')
-
-    useEffect(() => {
-        // Set initial date when the component mounts
-        const today = new Date();
-        const formattedDate = today.toISOString().substr(0, 10); // YYYY-MM-DD format
-        setState(formattedDate);
-      }, []);
+    const[state, setState] = useState(today)
 
     function setInput(e){
         setState(e.target.value)

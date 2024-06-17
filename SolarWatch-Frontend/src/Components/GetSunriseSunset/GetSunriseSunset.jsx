@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import FormTextInput from "../FormComponents/FormTextInput"
 import FormDateInput from "../FormComponents/FormDateInput"
@@ -14,13 +14,12 @@ export default function GetSunriseSunset(){
     const {user} = useContext(AuthContext)|| {};
 
     const[sunriseSunset, SetSunriseSunset] = useState({
-        cityName: "", date: "2024-04-29"
+        cityName: "", date: new Date().toISOString().substr(0, 10)
     })
 
     const[sunriseSunsetResult, SetSunriseSunsetResult] = useState({
         city: "", country: "", date: "", sunrise: "", sunset: "", timeZone:""
     })
-
 
     function setForm(e){
         if(e.target.name === "city")
@@ -80,7 +79,7 @@ export default function GetSunriseSunset(){
             <h2>Sunrise/Sunset form</h2>
                 <form className="GetSunriseSunet" onSubmit={onSubmit}>
                     <FormTextInput inputNameAndId={"city"} label={"City"} setForm={setForm}/>
-                    <FormDateInput inputNameAndId={"date"} label={"Date"} setForm={setForm}/>
+                    <FormDateInput inputNameAndId={"date"} label={"Date"} setForm={setForm} today={sunriseSunset.date}/>
                     <div className="buttons">
                             <button type="submit" className="submit-button">
                             Submit
